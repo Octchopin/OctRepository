@@ -1,0 +1,156 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+  <!--代表使用inc目录下模板是muban.html中的叫header的模块中间的内容-->
+  <th:block th:include="inc/muban :: header" />
+  <style>
+    .listlabel{
+      display:inline;
+      font-weight:normal;
+    }
+  </style>
+  <script type="text/javascript" th:src="@{/resources/scripts/jquery-3.6.0.js}"></script>
+</head>
+<body>
+<div id="body-wrapper">
+  <!-- Wrapper for the radial gradient background -->
+  <div id="sidebar">
+    <th:block th:include="inc/muban :: sidebar" />
+   </div>
+  <!-- End #sidebar -->
+  <div id="main-content">
+    <!-- Page Head -->
+    <h2>参数管理</h2>
+    <!-- End .shortcut-buttons-set -->
+    <div class="clear"></div>
+    <!-- End .clear -->
+    <div class="content-box">
+      <!-- Start Content Box -->
+      <div class="content-box-header">
+        <h3>添加参数</h3>
+        <div class="clear"></div>
+      </div>
+      <!-- End .content-box-header -->
+
+      <div class="content-box-content">
+        <div class="tab-content default-tab">
+          <form th:action="@{/attr/alter}" method="post" >
+          <table>
+            <thead>
+              <tr>
+                <th width="150px">参数</th>
+                <th >参数值</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr>
+                <td ><label>属性键的id</label></td>
+                <td >
+                  <input class="text-input small-input" type="text" id="small-input" name="key_id" th:value="${key.key_id}" readonly>
+                </td>
+              </tr>
+              <tr>
+                <td ><label>属性名</label></td>
+                <td >
+                  <input class="text-input small-input" type="text" id="small-input" name="key_name" th:value="${key.key_name}">
+                  <button class="button addvaluebtn" type="button">添加属性值</button>
+                </td>
+              </tr>
+              <tr>
+                <td ><label>属性值列表</label></td>
+                <td >
+                  <div class="valuelist">
+                    <div class="valuex" th:each="val:${key.valueList}">
+                      <input class="text-input small-input" type="text" id="small-input" name="value_name" th:value="${val.value_name}">
+                      <button class="valuejian" type="button">×</button>
+                    </div>
+
+                  </div>
+
+                </td>
+              </tr>
+              <tr>
+                <td ><label>选择分类</label></td>
+                <td >
+                  <th:block th:each="c:${key.categoryList}" th:if="${key.categoryList!=null}" >
+
+                    <input class="text-input small-input" type="text" id="small-input" name="cate_id" list="datalist" th:value="${c.cate_id}">
+                  </th:block>
+
+                  <th:block th:if="${key.categoryList==null}" >
+
+                    <input class="text-input small-input" type="text" id="small-input" name="cate_id" list="datalist" >
+                    <datalist id="datalist">
+                      <th:block th:each="cate:${categoryList}">
+                        <option  th:value="${cate.cate_id}" th:text="${cate.cate_name}"></option>
+                      </th:block>
+
+                    </datalist>
+                  </th:block>
+
+
+                  <datalist id="datalist">
+                    <th:block th:each="cate:${categoryList}">
+                      <option  th:value="${cate.cate_id}" th:text="${cate.cate_name}"></option>
+                    </th:block>
+
+                  </datalist>
+                </td>
+              </tr>
+              <tr>
+                <td ><label>是否是规格属性</label></td>
+                <td >
+                  <select name="key_issku">
+                    <option value="0" th:selected="${key.key_issku==0 ||key.key_issku eq null}">否</option>
+                    <option value="1" th:selected="${key.key_issku==1}">是</option>
+                  </select>
+                </td>
+              </tr>
+              <tr>
+                <td ><label>是否是高级属性</label></td>
+                <td >
+                  <select name="key_ishigh">
+                    <option value="0" th:selected="${key.key_ishigh==0 ||key.key_ishigh==null }">否</option>
+                    <option value="1" th:selected="${key.key_ishigh==1}">是</option>
+                  </select>
+                </td>
+                </td>
+              </tr>
+            </tbody>
+            <tfoot>
+            <tr>
+              <td colspan="2">
+                <button class="button" >提交修改</button>
+              </td>
+            </tr>
+            </tfoot>
+          </table>
+          </form>
+        </div>
+
+      </div>
+      <!-- End .content-box-content -->
+    </div>
+
+    <th:block th:include="inc/muban :: footer"></th:block>
+  </div>
+  <!-- End #main-content -->
+  <script>
+    $(".addvaluebtn").click(function(){
+      $(".valuelist").append(`
+        <div class="valuex">
+                <input class="text-input small-input" type="text" id="small-input" name="value_name"><button class="valuejian" type="button">×</button>
+              </div>
+      `);
+    })
+
+    $(function(){
+      $(document).on("click",".valuejian",function(){
+        $(this).parent().remove();
+      })
+    })
+  </script>
+</div>
+</body>
+<!-- Download From www.exet.tk-->
+</html>

@@ -1,0 +1,99 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+  <!--代表使用inc目录下模板是muban.html中的叫header的模块中间的内容-->
+  <th:block th:include="inc/muban :: header" />
+</head>
+<body>
+<div id="body-wrapper">
+  <!-- Wrapper for the radial gradient background -->
+  <div id="sidebar">
+    <th:block th:include="inc/muban :: sidebar" />
+   </div>
+  <!-- End #sidebar -->
+  <div id="main-content">
+    <!-- Page Head -->
+    <h2>品牌管理</h2>
+    <!-- End .shortcut-buttons-set -->
+    <div class="clear"></div>
+    <!-- End .clear -->
+    <div class="content-box">
+      <!-- Start Content Box -->
+      <div class="content-box-header">
+        <h3>品牌管理</h3>
+        <div class="clear"></div>
+      </div>
+      <!-- End .content-box-header -->
+      <div class="content-box-content">
+        <div class="tab-content default-tab">
+          <a class="button" th:href="@{/brand/add}">添加品牌</a>
+          <table>
+            <thead>
+              <tr>
+                <th width="150px">品牌ID</th>
+                <th width="150px">品牌名</th>
+                <th width="100px">品牌Logo</th>
+                <th width="80px">品牌排序</th>
+                <th width="150px">创建时间</th>
+                <th width="150px">更新时间</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tfoot>
+              <tr>
+                <td colspan="6">
+                  <div class="bulk-actions align-left">
+                    当前是第
+                    <span th:text="${pager.pageNum}"></span>
+                   页
+                  </div>
+                  <div class="pagination">
+                    <a th:href="@{/brand/admin}" title="First Page">&laquo; First</a>
+                    <a th:href="@{/brand/admin(page=${pager.prePage})}" title="Previous Page">&laquo; Previous</a>
+                    <th:block th:each="i:${#numbers.sequence(1, pager.pages)}">
+
+                    <a th:href="@{/brand/admin(page=${i})}" th:class="${i==pager.pageNum?'number current':'number'}" title="1" th:text="${i}">1</a>
+                    </th:block>
+                    <a th:href="@{/brand/admin(page=${pager.nextPage})}" title="Next Page">Next &raquo;</a>
+                    <a th:href="@{/brand/admin(page=${pager.pages})}" title="Last Page">Last &raquo;</a> </div>
+                  <!-- End .pagination -->
+                  <div class="clear"></div>
+                </td>
+              </tr>
+            </tfoot>
+            <tbody>
+              <th:block th:each="bd:${pager.list}">
+              <tr>
+                <td th:text="${bd.brand_id}">Lorem ipsum dolor</td>
+                <td th:text="${bd.brand_name}"></td>
+                <td >
+                  <img width="60px" height="30px" th:src="@{${'http://localhost:8888/img/'+bd.brand_logourl}}">
+                </td>
+                <td th:text="${bd.sortno}">
+                </td>
+                <td th:text="${#dates.format(bd.createtime,'yyyy-MM-dd')}">
+                </td>
+                </td>
+                <td th:text="${#dates.format(bd.updatetime,'yyyy-MM-dd')}">
+                </td>
+                <td>
+                    <a th:href="@{/brand/update(brand_id=${bd.brand_id})}" title="编辑品牌"><img th:src="@{/resources/images/icons/pencil.png}" alt="编辑品牌" /></a>
+                    <a th:href="@{/brand/delete(brand_id=${bd.brand_id})}" onclick='return confirm("确定要品牌吗？");' title="删除品牌"><img th:src="@{/resources/images/icons/cross.png}" alt="删除品牌" /></a>
+                  <!-- Icons -->
+                  </td>
+              </tr>
+              </th:block>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+      <!-- End .content-box-content -->
+    </div>
+
+    <th:block th:include="inc/muban :: footer"></th:block>
+  </div>
+  <!-- End #main-content -->
+</div>
+</body>
+<!-- Download From www.exet.tk-->
+</html>

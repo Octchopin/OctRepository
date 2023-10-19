@@ -1,0 +1,259 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <!--代表使用inc目录下模板是muban.html中的叫header的模块中间的内容-->
+    <th:block th:include="inc/muban :: header"/>
+    <style>
+        .listlabel {
+            display: inline !important;
+            font-weight: normal;
+        }
+
+        .addkeyvaluebtn {
+            margin: 5px;
+        }
+
+        .kvcha {
+            display: none;
+        }
+
+        .kv2:last-child .kvcha {
+            display: inline-block;
+        }
+
+        .chaval {
+            display: none;
+        }
+
+        .valueitem:last-child .chaval {
+            display: inline-block;
+        }
+    </style>
+    <script type="text/javascript" th:src="@{/resources/scripts/jquery-3.6.0.js}"></script>
+
+
+</head>
+<body>
+<div id="body-wrapper">
+    <!-- Wrapper for the radial gradient background -->
+    <div id="sidebar">
+        <th:block th:include="inc/muban :: sidebar"/>
+    </div>
+    <!-- End #sidebar -->
+    <div id="main-content">
+        <!-- Page Head -->
+        <h2>产品管理</h2>
+        <!-- End .shortcut-buttons-set -->
+        <div class="clear"></div>
+        <!-- End .clear -->
+        <div class="content-box">
+            <!-- Start Content Box -->
+            <div class="content-box-header">
+                <h3>添加产品</h3>
+                <div class="clear"></div>
+            </div>
+            <!-- End .content-box-header -->
+
+            <div class="content-box-content">
+                <div class="tab-content default-tab">
+                    <form th:action="@{/spu/save}" method="post" enctype="multipart/form-data">
+                        <table>
+                            <thead>
+                            <tr>
+                                <th width="150px">属性</th>
+                                <th>值</th>
+                            </tr>
+                            </thead>
+
+                            <tbody>
+                            <tr>
+                                <td><label>商品名</label></td>
+                                <td>
+                                    <input class="text-input small-input" type="text" id="small-input" name="spu_name">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><label>商品标题</label></td>
+                                <td>
+                                    <input class="text-input small-input" type="text" id="small-input" name="spu_title">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><label>选择品牌</label></td>
+                                <td>
+                                    <input class="text-input small-input" type="text" id="small-input" name="brand_id"
+                                           list="datalist" onchange="ss()">
+                                    <datalist id="datalist" class="brandlist">
+                                        <th:block th:each="cate:${brandList}">
+                                            <option th:value="${cate.brand_id}" th:text="${cate.brand_name}"></option>
+                                        </th:block>
+
+                                    </datalist>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><label>产品单位</label></td>
+                                <td>
+                                    <input class="text-input small-input" type="text" id="small-input" name="spu_unit">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><label>是否上架</label></td>
+                                <td>
+                                    <select name="spu_status" class="text-input small-input">
+                                        <option value="1">上架</option>
+                                        <option value="0">下架</option>
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><label>选择分类</label></td>
+                                <td>
+                                    <input class="text-input small-input" type="text" id="small-input" name="cate_id xgq"
+                                           list="datalist2" onblur="getkeyList(this.value)">
+                                    <datalist id="datalist2">
+                                        <th:block th:each="cate:${categoryList}">
+                                            <option th:value="${cate.cate_id}" th:text="${cate.cate_name}"></option>
+                                        </th:block>
+
+                                    </datalist>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><label>请选择筛选属性</label></td>
+                                <td>
+                                    <div class="shaixuan">
+                                        <div class="keyvalue">
+
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td><label>添加规格属性</label></td>
+                                <td>
+                                    <div class="kvwai">
+
+
+                                    </div>
+
+                                </td>
+                                </td>
+                            </tr>
+                            </tbody>
+                            <tfoot>
+                            <tr>
+                                <td colspan="2">
+                                    <button class="button">添加提交</button>
+                                </td>
+                            </tr>
+                            </tfoot>
+                        </table>
+                    </form>
+                </div>
+
+            </div>
+            <!-- End .content-box-content -->
+        </div>
+
+        <th:block th:include="inc/muban :: footer"></th:block>
+    </div>
+    <!-- End #main-content -->
+
+    <script>
+        function getkeyList(cate_id) {
+
+
+                //获取规格列表
+                //根据分类的id 去获取 属性键
+                $.get("http://localhost:8080/spu/getKeyList/" + cate_id, function (data) {
+                    //将字符串转成对象
+                    let str = "";
+                    let i = 0;
+                    for (let key of data) {
+
+                        str = str + `
+             <div class="kv2">
+                <div class="key2">
+                  属性键：<input name="keyList[${i}].key_id" class="text-input small-input" type="hidden" value="${key.key_id}">
+                        <span>${key.key_name}</span>
+                   <input class="addvaluebtn" type="button" value="添加属性值">
+                </div>
+                <div class="value2">
+
+                </div>
+                 <hr/>
+             </div>
+           `
+                        i++;
+                    }
+                    $(".kvwai").append(str);
+
+                })
+
+
+                //获取筛选列表
+
+                $.get("http://localhost:8080/spu/getsxKeyList/" + cate_id, function (data) {
+                    //将字符串转成对象
+                    let str = "";
+                    let i = 0;
+                    for (let key of data) {
+
+                        j = 0;
+                        str = str + `
+          <div class="keyvalue">
+                        <span>
+                          ${key.key_name}
+                          <input type="hidden" name="sxkeyList[${i}].key_id" value="${key.key_id}">
+                        </span>`;
+
+                        for (let val of key.valueList) {
+                            str += ` <label class="listlabel"><input type="checkbox" name="value_ids" value="${val.value_id}">${val.value_name}</label>`
+                            j++;
+                        }
+
+                        str += `
+          </div>
+          `
+                        i++;
+
+                    }
+                    $(".shaixuan").append(str);
+
+                })
+
+
+
+        }
+
+
+        $(function () {
+            $(document).on("click", ".addvaluebtn", function () {
+                let i = $(this).parent().parent().index();
+                console.log(i)
+                //获取当前value的个数
+                let j = $(this).parent().next().children().length;
+                $(this).parent().next().append(`
+              <div class="valueitem">
+                  属性值: <input name="keyList[${i}].valueList[${j}].value_name"  class="text-input small-input" type="text">
+                  选择图片:<input name="keyList[${i}].valueList[${j}].tupian" class="text-input small-input" type="file" multiple>
+                  <input type="button" class="chaval" value="×">
+                </div>`);
+            })
+
+        })
+
+        $(function () {
+            //删除最后一个属性值
+            $(document).on("click", ".chaval", function () {
+                $(this).parent().remove();
+            })
+        })
+    </script>
+
+
+</div>
+</body>
+<!-- Download From www.exet.tk-->
+</html>

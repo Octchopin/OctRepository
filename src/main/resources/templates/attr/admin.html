@@ -1,0 +1,156 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+  <!--代表使用inc目录下模板是muban.html中的叫header的模块中间的内容-->
+  <th:block th:include="inc/muban :: header" />
+  <style>
+    .fou{
+      background:#dd0000;
+      color:#fff;
+      padding:2px;
+      border-radius:5px;
+    }
+    .shi{
+      background:#00dd00;
+      color:#fff;
+      padding:5px;
+      border-radius:5px;
+    }
+    .cate{
+      background:#4444ff;
+      padding:2px 5px;
+      border-radius:5px;
+      color:#fff;
+    }
+  </style>
+</head>
+<body>
+<div id="body-wrapper">
+  <!-- Wrapper for the radial gradient background -->
+  <div id="sidebar">
+    <th:block th:include="inc/muban :: sidebar" />
+   </div>
+  <!-- End #sidebar -->
+  <div id="main-content">
+    <!-- Page Head -->
+    <h2>参数管理</h2>
+    <!-- End .shortcut-buttons-set -->
+    <div class="clear"></div>
+    <!-- End .clear -->
+    <div class="content-box">
+      <!-- Start Content Box -->
+      <div class="content-box-header">
+        <h3>参数管理</h3>
+        <div class="clear"></div>
+      </div>
+      <!-- End .content-box-header -->
+      <div class="content-box-content">
+        <div class="tab-content default-tab">
+
+          <form th:action="@{/attr/admin2}" method="post">
+            <a class="button" th:href="@{/attr/add}">添加参数</a>
+            <input  class="text-input small-input"  placeholder="参数名" name="key_name" th:value="${key_name}">
+            <input  class="text-input small-input"  placeholder="分类" name="cate_name" th:value="${cate_name}">
+            <input  class="button"  type="submit" value="搜索">
+          </form>
+          <table>
+            <thead>
+              <tr>
+                <th width="150px">参数ID</th>
+                <th width="150px">参数名</th>
+                <th width="100px">规格属性</th>
+                <th width="80px">高级属性</th>
+                <th width="150px">所属分类</th>
+                <th width="150px">创建时间</th>
+                <th width="150px">更新时间</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tfoot>
+              <tr>
+                <td colspan="6">
+                  <div class="bulk-actions align-left">
+                    当前是第
+                    <span th:text="${pager.pageNum}"></span>
+                   页
+                  </div>
+                  <div class="pagination">
+                    <a th:href="@{/attr/admin}" title="First Page">&laquo; First</a>
+                    <a th:href="@{/attr/admin(page=${pager.prePage})}" title="Previous Page" th:if="${pager.PageNum>1}">&laquo; Previous</a>
+                    <span th:class="number" title="1"  th:if="${pager.PageNum>=7}">▪▪▪</span>
+                    <th:block th:each="i:${#numbers.sequence(1, 10)}" th:if="${pager.PageNum<7 and pager.PageNum>=1}" >
+
+                      <a th:href="@{/attr/admin(page=${i})}" th:class="${i==pager.pageNum?'number current':'number'}" title="1" th:text="${i}">1</a>
+                    </th:block>
+                    <th:block th:each="i:${#numbers.sequence(pager.PageNum-5, pager.PageNum+4)}" th:if="${pager.PageNum>=7 and pager.PageNum<pager.Pages-4}">
+
+                    <a th:href="@{/attr/admin(page=${i})}" th:class="${i==pager.pageNum?'number current':'number'}" title="1" th:text="${i}">1</a>
+                    </th:block>
+                    <th:block th:each="i:${#numbers.sequence(pager.Pages-9, pager.Pages)}" th:if="${pager.PageNum<=pager.Pages and pager.PageNum>=pager.Pages-4}" >
+
+                      <a th:href="@{/attr/admin(page=${i})}" th:class="${i==pager.pageNum?'number current':'number'}" title="1" th:text="${i}">1</a>
+                    </th:block>
+                    <span th:class="number" title="1"  th:if="${pager.PageNum<pager.Pages-4}">▪▪▪</span>
+                    <a th:href="@{/attr/admin(page=${pager.nextPage})}" title="Next Page" th:if="${pager.PageNum<pager.Pages}">Next &raquo;</a>
+                    <a th:href="@{/attr/admin(page=${pager.pages})}" title="Last Page">Last &raquo;</a>
+                  </div>
+                  <!-- End .pagination -->
+                  <div class="clear"></div>
+                </td>
+              </tr>
+            </tfoot>
+            <tbody>
+              <th:block th:each="key:${pager.list}">
+              <tr>
+                <td th:text="${key.key_id}">Lorem ipsum dolor</td>
+                <td th:text="${key.key_name}"></td>
+                <td >
+                  <th:block th:if="${key.key_issku==0}">
+                    <span class="fou">否</span>
+                  </th:block>
+
+                  <th:block th:if="${key.key_issku==1}">
+                    <span class="shi">是</span>
+                  </th:block>
+
+                </td>
+                <td >
+                  <th:block th:if="${key.key_ishigh==0}">
+                    <span class="fou">否</span>
+                  </th:block>
+
+                  <th:block th:if="${key.key_ishigh==1}">
+                    <span class="shi">是</span>
+                  </th:block>
+                </td>
+                <td>
+                  <span class="cate" th:each="cate:${key.categoryList}">
+                    <th:block th:text="${cate.cate_name}"></th:block>
+                  </span>
+                </td>
+                <td th:text="${#dates.format(key.createtime,'yyyy-MM-dd')}">
+                </td>
+                </td>
+                <td th:text="${#dates.format(key.updatetime,'yyyy-MM-dd')}">
+                </td>
+                <td>
+                    <a th:href="@{/attr/update/{key_id}(key_id=${key.key_id})}" title="编辑员工"><img th:src="@{/resources/images/icons/pencil.png}" alt="编辑员工" /></a>
+                    <a th:href="@{/attr/delete(key_id=${key.key_id})}" onclick='return confirm("确定要参数吗？");' title="删除员工"><img th:src="@{/resources/images/icons/cross.png}" alt="删除员工" /></a>
+                  <!-- Icons -->
+                  </td>
+              </tr>
+              </th:block>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+      <!-- End .content-box-content -->
+    </div>
+
+    <th:block th:include="inc/muban :: footer"></th:block>
+  </div>
+  <!-- End #main-content -->
+</div>
+</body>
+<!-- Download From www.exet.tk-->
+</html>

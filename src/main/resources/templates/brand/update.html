@@ -1,0 +1,136 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+  <!--代表使用inc目录下模板是muban.html中的叫header的模块中间的内容-->
+  <th:block th:include="inc/muban :: header" />
+  <style>
+    .listlabel{
+      display:inline;
+      font-weight:normal;
+    }
+  </style>
+</head>
+<body>
+<div id="body-wrapper">
+  <!-- Wrapper for the radial gradient background -->
+  <div id="sidebar">
+    <th:block th:include="inc/muban :: sidebar" />
+   </div>
+  <!-- End #sidebar -->
+  <div id="main-content">
+    <!-- Page Head -->
+    <h2>品牌管理</h2>
+    <!-- End .shortcut-buttons-set -->
+    <div class="clear"></div>
+    <!-- End .clear -->
+    <div class="content-box">
+      <!-- Start Content Box -->
+      <div class="content-box-header">
+        <h3>添加品牌</h3>
+        <div class="clear"></div>
+      </div>
+      <!-- End .content-box-header -->
+
+      <div class="content-box-content">
+        <div class="tab-content default-tab">
+          <form th:action="@{/brand/alter}" method="post" enctype="multipart/form-data">
+          <table>
+            <thead>
+              <tr>
+                <th width="150px">属性</th>
+                <th >值</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr>
+                <td ><label>品牌Id</label></td>
+                <td >
+                  <input class="text-input small-input" type="text" id="small-input" readonly name="brand_id" th:value="${brand.brand_id}">
+                </td>
+              </tr>
+              <tr>
+                <td ><label>品牌名</label></td>
+                <td >
+                  <input class="text-input small-input" type="text" id="small-input" name="brand_name" th:value="${brand.brand_name}">
+                </td>
+              </tr>
+              <tr>
+                <td ><label>品牌logo</label></td>
+                <td >
+                  <img width="60px" height="30px" th:src="@{${'http://localhost:8888/img/'+brand.brand_logourl}}">
+                  <input class="text-input small-input" type="file" id="small-input" name="brand_img">
+                </td>
+              </tr>
+              <tr>
+                <td ><label>排序</label></td>
+                <td >
+                  <input class="text-input small-input" type="text" id="small-input" name="sortno" th:value="${brand.sortno}">
+                </td>
+              </tr>
+              <tr>
+                <td ><label>品牌介绍</label></td>
+                <td >
+                  <textarea class="text-input textarea wysiwyg" id="textarea" name="brand_introduction" th:text="${brand.brand_introduction}" style="width:50%!important;">
+                  </textarea>
+                </td>
+              </tr>
+              <!--
+              <tr>
+                <td ><label>当前品牌所属分类</label></td>
+                <td >
+
+                  <th:block th:each="yi:${brand.categoryList}" th:if="${yi.cate_parentid==null}">
+                    <label class="yi" style="font-size:18px">
+                      <input name="cate_ids" th:value="${yi.cate_id}" type="checkbox" th:checked="${yi.ischecked!=null}">
+                      <th:block th:text="${yi.cate_name}"></th:block>
+                    </label>
+                -->
+                    <!--二级权限的pid等于一级权限的id-->
+
+              <!--
+                   <th:block th:each="er:${brand.categoryList}" th:if="${er.cate_parentid==yi.cate_id}">
+                     <div style="margin-left:30px;margin-bottom:10px">
+                       <label class="er listlabel" style="font-weight:bold;">
+                         <input name="cate_ids" th:value="${er.cate_id}" type="checkbox" th:checked="${er.ischecked!=null}">
+                         <th:block th:text="${er.cate_name}"></th:block>:
+                       </label>
+-->
+                       <!--二级权限的pid等于一级权限的id-->
+              <!--
+                       <th:block th:each="san:${brand.categoryList}" th:if="${san.cate_parentid==er.cate_id}">
+                         <label class="san listlabel" >
+                           <input name="cate_ids" th:value="${san.cate_id}" type="checkbox" th:checked="${san.ischecked!=null}" >
+                           <th:block th:text="${san.cate_name}"></th:block>:
+                         </label>
+                       </th:block>
+                     </div>
+                   </th:block>
+
+                   <hr>
+                 </th:block>
+               </td>
+             </tr>
+             -->
+           </tbody>
+           <tfoot>
+           <tr>
+             <td colspan="2">
+               <button class="button" >修改提交</button>
+             </td>
+           </tr>
+           </tfoot>
+         </table>
+         </form>
+       </div>
+
+     </div>
+     <!-- End .content-box-content -->
+    </div>
+
+    <th:block th:include="inc/muban :: footer"></th:block>
+  </div>
+  <!-- End #main-content -->
+</div>
+</body>
+<!-- Download From www.exet.tk-->
+</html>

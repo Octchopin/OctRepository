@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xgq.dao.CategoryDao">
+<select id="findAllCategory" resultType="com.xgq.pojo.Category" >
+    select *
+    from category
+</select>
+    <select id="findAllCategoryByCate_id" resultType="com.xgq.pojo.Category">
+        select *
+        from category where cate_id=#{cate_id}
+    </select>
+    <insert id="insertCategory" keyProperty="cate_id" useGeneratedKeys="true">
+        insert into category (cate_name,cate_sort,createtime,updatetime,cate_channel,cate_parentid)
+        values (#{cate_name},#{cate_sort},now(),now(),#{cate_channel},#{cate_parentid});
+    </insert>
+    <delete id="deleteCategory" >
+        delete
+        from category
+        where cate_id=#{cate_id}
+    </delete>
+    <select id="findCategoryByCate_id" resultMap="categoryMap1">
+        select * from   category
+            where cate_id=#{cate_id}
+    </select>
+    <resultMap id="categoryMap1" type="com.xgq.pojo.Category" >
+        <id property="cate_id" column="cate_id"></id>
+        <result property="cate_name" column="cate_name"></result>
+        <result property="cate_sort" column="cate_sort"></result>
+        <result property="createtime" column="createtime"></result>
+        <result property="updatetime" column="updatetime"></result>
+        <result property="cate_channel" column="cate_channel"></result>
+        <result property="cate_parentid" column="cate_parentid"></result>
+        <collection property="brandList" ofType="com.xgq.pojo.Brand" column="cate_id" select="com.xgq.dao.CategoryDao.findIsCheckedBrandList" fetchType="lazy"></collection>
+    </resultMap>
+    <select id="findIsCheckedBrandList" resultType="com.xgq.pojo.Brand">
+        SELECT nb.* , h.brand_id as ischecked FROM brand nb LEFT  JOIN (SELECT b.brand_id FROM brand_categories bc INNER JOIN brand b ON b.brand_id=bc.brand_id WHERE bc.category_id=#{cate_id}) h ON h.brand_id=nb.brand_id
+    </select>
+    <update id="updateCategoryByObject" >
+        update category
+        <set>
+           <if test="cate_name!=null and cate_name!=''"> cate_name=#{cate_name},</if>
+            cate_sort= #{cate_sort},createtime= #{createtime},updatetime= #{updatetime},cate_channel= #{cate_channel},cate_parentid= #{cate_parentid},
+        </set>
+        where cate_id=#{cate_id}
+    </update>
+    <delete id="deleteBrand_Category" >
+        delete
+        from brand_categories
+        where category_id=#{cate_id}
+    </delete>
+    <insert id="insertBrand_Category">
+        insert into brand_categories (brand_id,category_id)
+        values
+<foreach collection="brand_ids" item="brand_id" separator=",">
+    ( #{brand_id},#{cate_id})
+</foreach>
+    </insert>
+</mapper>

@@ -1,0 +1,94 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+  <!--代表使用inc目录下模板是muban.html中的叫header的模块中间的内容-->
+  <th:block th:include="inc/muban :: header" />
+</head>
+<body>
+<div id="body-wrapper">
+  <!-- Wrapper for the radial gradient background -->
+  <div id="sidebar">
+    <th:block th:include="inc/muban :: sidebar" />
+   </div>
+  <!-- End #sidebar -->
+  <div id="main-content">
+    <!-- Page Head -->
+    <h2>角色管理</h2>
+    <!-- End .shortcut-buttons-set -->
+    <div class="clear"></div>
+    <!-- End .clear -->
+    <div class="content-box">
+      <!-- Start Content Box -->
+      <div class="content-box-header">
+        <h3>角色列表</h3>
+        <div class="clear"></div>
+      </div>
+      <!-- End .content-box-header -->
+      <div class="content-box-content">
+        <div class="tab-content default-tab">
+          <a class="button" th:href="@{/role/add}">添加角色</a>
+          <table>
+            <thead>
+              <tr>
+                <th width="150px">角色ID</th>
+                <th width="150px">角色名</th>
+                <th width="">角色对应的权限</th>
+                <th width="100px">操作</th>
+              </tr>
+            </thead>
+            <tfoot>
+              <tr>
+                <td colspan="6">
+                  <div class="bulk-actions align-left">
+                    当前是第
+                    <span th:text="${pager.pageNum}"></span>
+                   页
+                  </div>
+                  <div class="pagination">
+                    <a th:href="@{/role/admin}" title="First Page">&laquo; First</a>
+                    <a th:href="@{/role/admin(page=${pager.prePage})}" title="Previous Page">&laquo; Previous</a>
+                    <th:block th:each="i:${#numbers.sequence(1, pager.pages)}">
+                    <a th:href="@{/role/admin(page=${i})}" class="number" title="1" th:text="${i}">1</a>
+                    </th:block>
+                    <a th:href="@{/role/admin(page=${pager.nextPage})}" title="Next Page">Next &raquo;</a>
+                    <a th:href="@{/role/admin(page=${pager.pages})}" title="Last Page">Last &raquo;</a> </div>
+                  <!-- End .pagination -->
+                  <div class="clear"></div>
+                </td>
+              </tr>
+            </tfoot>
+            <tbody>
+              <th:block th:each="role:${pager.list}">
+              <tr>
+                <td th:text="${role.role_id}">Lorem ipsum dolor</td>
+                <td th:text="${role.role_name}"></td>
+                <td>
+                  <span th:each="perm:${role.permissionList}"><th:block th:text="${perm.permission_name}"></th:block>&nbsp;&nbsp;</span>
+
+                </td>
+                <td>
+                  <th:block th:if="${role.role_id==1}">
+                    <span style="color:red">禁止操作</span>
+                  </th:block>
+                  <th:block th:if="${role.role_id!=1}">
+                    <a th:href="@{/role/update/{role_id}(role_id=${role.role_id})}" title="编辑角色"><img th:src="@{/resources/images/icons/pencil.png}" alt="编辑员工" /></a>
+                    <a th:href="@{/role/delete(role_id=${role.role_id})}" onclick='return confirm("确定要删除角色及其权限吗？");' title="删除员工"><img th:src="@{/resources/images/icons/cross.png}" alt="删除员工" /></a>
+                  </th:block>
+                  <!-- Icons -->
+                  </td>
+              </tr>
+              </th:block>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+      <!-- End .content-box-content -->
+    </div>
+
+    <th:block th:include="inc/muban :: footer"></th:block>
+  </div>
+  <!-- End #main-content -->
+</div>
+</body>
+<!-- Download From www.exet.tk-->
+</html>

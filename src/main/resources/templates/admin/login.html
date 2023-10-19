@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <!--                       CSS                       -->
+    <!-- Reset Stylesheet -->
+    <link rel="stylesheet" th:href="@{/resources/css/reset.css}" type="text/css" media="screen"/>
+    <!-- Main Stylesheet -->
+    <link rel="stylesheet" th:href="@{/resources/css/style.css}" type="text/css" media="screen"/>
+    <!-- Invalid Stylesheet. This makes stuff look pretty. Remove it if you want the CSS completely valid -->
+    <link rel="stylesheet" th:href="@{/resources/css/invalid.css}" type="text/css" media="screen"/>
+    <!--                       Javascripts                       -->
+    <!-- jQuery -->
+    <script type="text/javascript" th:src="@{/resources/scripts/jquery-1.3.2.min.js}"></script>
+    <!-- jQuery Configuration -->
+    <script type="text/javascript" th:src="@{/resources/scripts/simpla.jquery.configuration.js}"></script>
+    <!-- Facebox jQuery Plugin -->
+    <script type="text/javascript" th:src="@{/resources/scripts/facebox.js}"></script>
+    <!-- jQuery WYSIWYG Plugin -->
+    <script type="text/javascript" th:src="@{/resources/scripts/jquery.wysiwyg.js}"></script>
+</head>
+<body id="login">
+   <div id="login-wrapper" class="png_bg">
+    <div id="login-top">
+        <h1>学掌门商城管理系统</h1>
+        <div id="login-content">
+            <form th:action="@{/admin/dologin}" method="post">
+                <h1 style="margin-top:50px"></h1>
+                <p>
+                    <label>用户名</label>
+                    <input class="text-input" name="username" type="text"/>
+                </p>
+                <div class="clear"></div>
+                <p>
+                    <label>密码</label>
+                    <input class="text-input" name="password" type="password"/>
+                </p>
+                <div class="clear"></div>
+                <p id="remember-password">
+                <div class="clear"></div>
+                <p>
+                    <input class="button" type="submit" value="登 录"/>
+                </p>
+            </form>
+        </div>
+        <div>
+            <!-- End #login-content -->
+
+        <!-- End #login-wrapper -->
+</body>
+</html>

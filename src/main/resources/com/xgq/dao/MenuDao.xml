@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xgq.dao.MenuDao">
+
+    <select id="findMenuListByUsename" resultType="com.xgq.pojo.Menu">
+        select m.*,a.admin_name from admin a
+                                         inner join admin_role ar on ar.admin_id =a.admin_id
+                                         inner join  `role` r  on r.role_id =ar.role_id
+                                         inner join role_permission rp on rp.role_id =r.role_id
+                                         inner join permission p on p.permission_id =rp.permission_id
+                                         inner join permission_menu pm on pm.permission_id =p.permission_id
+                                         inner join  menu m on m.menu_id =pm.menu_id
+        where  a.admin_name =#{admin_name}
+    </select>
+</mapper>

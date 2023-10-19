@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xgq.dao.AttrDao">
+    <select id="findSpuAttrKeyPageList" resultMap="SpuKeyMap">
+        select *
+        from spu_attr_key
+    </select>
+    <resultMap id="SpuKeyMap" type="com.xgq.pojo.Spu_attr_key">
+        <id property="key_id" column="key_id"></id>
+        <result property="key_name" column="key_name"></result>
+        <result property="key_issku" column="key_issku"></result>
+        <result property="key_ishigh" column="key_ishigh"></result>
+        <result property="createtime" column="createtime"></result>
+        <result property="updatetime" column="updatetime"></result>
+        <collection property="categoryList" ofType="com.xgq.pojo.Category" column="key_id" fetchType="lazy"
+                    select="com.xgq.dao.AttrDao.findKeyCategoryList"></collection>
+        <collection property="valueList" ofType="com.xgq.pojo.Spu_attr_value" column="key_id" fetchType="lazy"
+                    select="com.xgq.dao.AttrDao.findSpuKeyValueList"></collection>
+    </resultMap>
+    <select id="findKeyCategoryList" resultType="com.xgq.pojo.Category">
+        select c.*
+        from spu_attr_key_categories kc
+                 inner join category c on c.cate_id = kc.category_id
+        where spu_attr_key_id = #{key_id}
+    </select>
+    <select id="findSpuKeyValueList" resultType="com.xgq.pojo.Spu_attr_value">
+        select *
+        from spu_attr_value
+        where key_id = #{key_id}
+    </select>
+    <insert id="insertSpu_attr_key">
+        insert into spu_attr_key (key_id, key_name, createtime, updatetime, key_ishigh, key_issku)
+        values (#{key_id}, #{key_name}, now(), now(), #{key_ishigh}, #{key_issku})
+    </insert>
+    <insert id="insertSpu_attr_key_category">
+        insert into spu_attr_key_categories (spu_attr_key_id, category_id)
+        values (#{key_id}, #{cate_id})
+    </insert>
+    <insert id="insertSpu_attr_Value">
+        insert into spu_attr_value (value_name,createtime,updatetime,key_id)
+        values
+        <foreach collection="value_names" separator="," item="value_name">
+            (#{value_name},now(),now(),#{key_id})
+        </foreach>
+
+
+    </insert>
+    <select id="findSpuAttrKeyByKey_Id" resultMap="SpuKeyMap">
+        select *
+        from spu_attr_key
+        where key_id = #{key_id}
+    </select>
+    <update id="updateSpu_attr_key">
+        update spu_attr_key
+        <set>
+            <if test="key_name!=null and key_name!=''">
+                key_name=#{key_name},
+            </if>
+            <if test="key_issku!=null and key_issku!=''">
+                key_issku=#{key_issku},
+            </if>
+            <if test="key_ishigh!=null and key_ishigh!=''">
+                key_ishigh=#{key_ishigh},
+            </if>
+            updatetime=now(),
+        </set>
+        where key_id=#{key_id}
+    </update>
+    <delete id="deleteSpu_attr_key_category">
+        delete
+        from spu_attr_key_categories
+        where spu_attr_key_id = #{key_id}
+    </delete>
+    <delete id="deleteSpu_attr_Value">
+        delete
+        from spu_attr_value
+        where key_id = #{key_id}
+    </delete>
+    <delete id="deleteSpu_attr_key">
+        delete
+        from spu_attr_key
+        where key_id = #{key_id}
+    </delete>
+    <select id="findSpuAttrKeyPageListLikeName" resultMap="keyMap1">
+        SELECT sak.createtime AS sakctime ,sak.updatetime AS sakutime ,sak.*,c.createtime AS cctime ,c.updatetime AS
+        cutime ,c.*
+        FROM spu_attr_key sak INNER JOIN spu_attr_key_categories sakc ON sak.key_id=sakc.spu_attr_key_id INNER JOIN
+        category c ON c.cate_id=sakc.category_id
+        <where>
+            <if test="key_name!=null and key_name!=''">and sak.key_name like concat('%',#{key_name},'%')</if>
+            <if test="cate_name!=null and cate_name!=''">and c.cate_name like concat('%', #{cate_name},'%')</if>
+
+        </where>
+    </select>
+    <resultMap id="keyMap1" type="com.xgq.pojo.Spu_attr_key">
+        <id column="key_id" property="key_id"></id>
+        <result property="key_name" column="key_name"></result>
+        <result property="key_issku" column="key_issku"></result>
+        <result property="key_ishigh" column="key_ishigh"></result>
+        <result property="createtime" column="sakctime"></result>
+        <result property="updatetime" column="sakutime"></result>
+        <collection property="categoryList" ofType="com.xgq.pojo.Category">
+            <id column="cate_id" property="cate_id"></id>
+            <result property="cate_name" column="cate_name"></result>
+            <result property="cate_sort" column="cate_sort"></result>
+            <result property="createtime" column="cctime"></result>
+            <result property="updatetime" column="cutime"></result>
+            <result property="cate_channel" column="cate_channel"></result>
+            <result property="cate_parentid" column="cate_parentid"></result>
+
+        </collection>
+    </resultMap>
+    <!--获取商品的规格属性键和值根据传入的id   -->
+    <select id="findSpuAttrKeyBySpu_Id" resultMap="cKeyMap">
+        SELECT sak.*,
+               sav.*,
+               sak.key_id     AS kkid,
+               sak.createtime AS kctime,
+               sak.updatetime AS kutime,
+               sav.key_id     AS vkid,
+               sav.createtime AS vctime,
+               sav.updatetime AS vutime
+        FROM spu_attr_value_spus savs
+                 INNER JOIN spu_attr_value sav ON sav.value_id = savs.spu_attr_value_id
+                 INNER JOIN spu_attr_key sak ON sak.key_id = sav.key_id
+
+        WHERE savs.spu_id = #{spu_id}
+
+    </select>
+    <resultMap id="cKeyMap" type="com.xgq.pojo.Spu_attr_key">
+        <id column="kkid" property="key_id"></id>
+        <result property="key_name" column="key_name"></result>
+        <result property="key_issku" column="key_issku"></result>
+        <result property="key_ishigh" column="key_ishigh"></result>
+        <result property="createtime" column="kctime"></result>
+        <result property="updatetime" column="kutime"></result>
+        <collection property="valueList" ofType="com.xgq.pojo.Spu_attr_value">
+            <id column="value_id" property="value_id"></id>
+            <result property="value_name" column="value_name"></result>
+            <result property="createtime" column="vctime"></result>
+            <result property="updatetime" column="vutime"></result>
+            <result property="key_id" column="vkid"></result>
+        </collection>
+    </resultMap>
+
+</mapper>
