@@ -8,10 +8,10 @@
         from brand
     </select>
     <insert id="savaBrand" keyProperty="brand_id" useGeneratedKeys="true">
-        insert into brand (brand_id, brand_name, brand_introduction, brand_logourl, sortno, createtime, updatetime)
+        insert into brand (brand_id, brand_name, brand_introduction, brand_logourl, sortno, createtime,  updatetime)
         values (#{brand_id}, #{brand_name}, #{brand_introduction}, #{brand_logourl}, #{sortno}, now(), now())
     </insert>
-    <delete id="deleteBrandCategory">
+    <delete id="deleteBrandCategory" >
         delete
         from brand_categories
         where brand_id = #{brand_id}
