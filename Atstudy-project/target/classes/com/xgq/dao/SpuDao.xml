@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xgq.dao.SpuDao">
+
+    <!--    根据用户名获取用户对象-->
+    <select id="findSpuList" resultMap="SpuMap">
+        select *
+        from spu where spu_status!=-1
+    </select>
+    <resultMap id="SpuMap" type="com.xgq.pojo.Spu">
+        <id property="spu_id" column="spu_id"></id>
+
+        <collection property="categoryList"
+                    ofType="com.xgq.pojo.Category"
+                    column="spu_id"
+                    select="com.xgq.dao.SpuDao.findCategoryList"
+                    fetchType="lazy">
+
+        </collection>
+    </resultMap>
+
+    <select id="findCategoryList" resultType="com.xgq.pojo.Category">
+        select c.*
+        from cate_spu cs
+                 inner join category c on c.cate_id = cs.cate_id
+        where cs.spu_id = #{spu_id}
+    </select>
+    <select id="findSpuKeyByCate_id" resultMap="SpuKeyMap2">
+        select sak.key_id AS sakid,sak.createtime AS sakctime,sak.updatetime AS sakutime,sak.*, sav.createtime AS
+        savctime,sav.updatetime AS savutime,sav.key_id AS savid, sav.*
+        from spu_attr_key_categories sakc
+        inner join spu_attr_key sak on sak.key_id=sakc.spu_attr_key_id inner join spu_attr_value sav on
+        sav.key_id=sak.key_id
+        <where>
+
+            and sakc.category_id=#{cate_id} and sak.key_issku=0
+        </where>
+    </select>
+    <resultMap id="SpuKeyMap2" type="com.xgq.pojo.Spu_attr_key">
+        <id column="sakid" property="key_id"></id>
+        <result column="key_name" property="key_name"></result>
+        <result column="key_issku" property="key_issku"></result>
+        <result column="key_ishigh" property="key_ishigh"></result>
+        <result column="sakctime" property="createtime"></result>
+        <result column="sakutime" property="updatetime"></result>
+        <collection property="valueList" ofType="com.xgq.pojo.Spu_attr_value">
+            <id column="value_id" property="value_id"></id>
+            <result column="value_name" property="value_name"></result>
+            <result column="savctime" property="createtime"></result>
+            <result column="savutime" property="updatetime"></result>
+            <result column="savid" property="key_id"></result>
+
+        </collection>
+    </resultMap>
+    <select id="findSupKeyGuigeById" resultType="com.xgq.pojo.Spu_attr_key">
+        select sak.* from spu_attr_key_categories sakc
+        inner join spu_attr_key sak on sak.key_id=sakc.spu_attr_key_id
+        <where>
+            and sakc.category_id=#{cate_id} and sak.key_issku=1
+        </where>
+    </select>
+    <!--插入新的spu对象数据-->
+    <insert id="insertSpu" useGeneratedKeys="true" keyColumn="spu_id" keyProperty="spu_id">
+        insert into spu (spu_name, spu_title, spu_introduction, spu_unit, spu_status, createtime, updatetime, brand_id)
+        values (#{spu_name}, #{spu_title}, #{spu_introduction}, #{spu_unit}, #{spu_status}, #{createtime},
+                #{updatetime}, #{brand_id})
+    </insert>
+    <insert id="insertSpuKey">
+        insert into spu_attr_value_spus (spu_attr_value_id,spu_id)
+        values
+
+        <foreach collection="value_ids" item="value_id" separator=",">
+            (#{value_id},#{spu_id})
+        </foreach>
+    </insert>
+
+    <insert id="insertValue" useGeneratedKeys="true" keyProperty="value_id">
+        insert into spu_attr_value (value_name, createtime, updatetime, key_id)
+        values (#{value_name}, now(), now(), #{key_id})
+    </insert>
+    <insert id="insertSpu_ValueIncludeImgs">
+        insert into spu_attr_value_spus (spu_attr_value_id, spu_id, spu_attr_imgs)
+        values (#{value_id}, #{spu_id}, #{spu_attr_imgs})
+    </insert>
+    <update id="updateSpu_status">
+        update spu
+        set spu_status=#{spu_status}
+        where spu_id = #{spu_id}
+    </update>
+    <select id="findSpuBySpuId" resultMap="spuMap3">
+        select *
+        from spu
+        where spu_id= #{spu_id}
+    </select>
+    <resultMap id="spuMap3" type="com.xgq.pojo.Spu">
+        <id property="spu_id" column="spu_id"></id>
+
+        <collection property="categoryList" ofType="com.xgq.pojo.Category" column="spu_id"
+                    select="com.xgq.dao.SpuDao.findCategory_Spu" fetchType="lazy"></collection>
+
+    </resultMap>
+
+    <select id="findCategory_Spu" resultType="com.xgq.pojo.Category">
+        select c.*
+        from cate_spu cs
+                 inner join category c on c.cate_id = cs.cate_id
+        where cs.spu_id = #{spu_id}
+    </select>
+
+        <select id="findKey_Value_Spu" resultType="com.xgq.pojo.Spu_attr_key">
+            SELECT * FROM spu s INNER JOIN spu_attr_value_spus savs ON savs.spu_id=s.spu_id  INNER JOIN  spu_attr_value sav ON savs.spu_attr_value_id=sav.value_id
+                                INNER JOIN  spu_attr_key sak ON sak.key_id= sav.key_id
+            WHERE s.spu_id=#{spu_id} AND  sak.key_issku=1
+        </select>
+    
+    <select id="findsxKey_Value_Spu" resultType="com.xgq.pojo.Spu_attr_key">
+        SELECT * FROM spu s INNER JOIN spu_attr_value_spus savs ON savs.spu_id=s.spu_id  INNER JOIN  spu_attr_value sav ON savs.spu_attr_value_id=sav.value_id
+                            INNER JOIN  spu_attr_key sak ON sak.key_id= sav.key_id
+        WHERE s.spu_id=#{spu_id} AND  sak.key_issku=0
+    </select>
+<select id="findsxValueByKeyId"  resultType="com.xgq.pojo.Spu_attr_value">
+   SELECT value_id AS  ischecked ,sav.* FROM spu_attr_value sav WHERE sav.key_id=#{key_id}
+</select>
+    <delete id="deleteSpu_Value" >
+        delete
+        from spu_attr_value_spus
+        where spu_id=#{spu_id}
+    </delete>
+    <delete id="deleteSpuBySpu_status">
+        delete
+        from spu
+        where spu_id=#{spu_id}
+    </delete>
+
+</mapper>

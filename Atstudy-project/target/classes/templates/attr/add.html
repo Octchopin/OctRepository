@@ -1,0 +1,164 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+  <!--代表使用inc目录下模板是muban.html中的叫header的模块中间的内容-->
+  <th:block th:include="inc/muban :: header" />
+  <style>
+    .listlabel{
+      display:inline;
+      font-weight:normal;
+    }
+  </style>
+  <script type="text/javascript" th:src="@{/resources/scripts/jquery-3.6.0.js}"></script>
+</head>
+<body>
+<div id="body-wrapper">
+  <!-- Wrapper for the radial gradient background -->
+  <div id="sidebar">
+    <th:block th:include="inc/muban :: sidebar" />
+   </div>
+  <!-- End #sidebar -->
+  <div id="main-content">
+    <!-- Page Head -->
+    <h2>参数管理</h2>
+    <!-- End .shortcut-buttons-set -->
+    <div class="clear"></div>
+    <!-- End .clear -->
+    <div class="content-box">
+      <!-- Start Content Box -->
+      <div class="content-box-header">
+        <h3>添加参数</h3>
+        <div class="clear"></div>
+      </div>
+      <!-- End .content-box-header -->
+
+      <div class="content-box-content">
+        <div class="tab-content default-tab">
+          <form th:action="@{/attr/save}" method="post" enctype="multipart/form-data">
+          <table>
+            <thead>
+              <tr>
+                <th width="150px">属性</th>
+                <th >值</th>
+              </tr>
+            </thead>
+
+            <tbody>
+            <tr>
+              <td ><label>是否是规格属性</label></td>
+              <td >
+                <select class="sel_key_issku" name="key_issku">
+                  <option value="0">否</option>
+                  <option value="1">是</option>
+                </select>
+              </td>
+            </tr>
+              <tr>
+                <td ><label>属性名</label></td>
+                <td class="td_value_name">
+                  <input class="text-input small-input" type="text" id="small-input" name="key_name">
+                  <button class="button addvaluebtn" type="button">添加属性值</button>
+                </td>
+              </tr>
+              <tr class="tr_value_name">
+                <td ><label>属性值</label></td>
+                <td >
+                  <div class="valuelist">
+                    <div class="valuex">
+                      <input class="text-input small-input" type="text" id="small-input" name="value_name" >
+                      <button class="valuejian" type="button">×</button>
+                    </div>
+
+                  </div>
+
+                </td>
+              </tr>
+              <tr>
+                <td ><label>选择分类</label></td>
+                <td >
+                  <input class="text-input small-input" type="text" id="small-input" name="cate_id" list="datalist">
+                  <datalist id="datalist">
+                    <th:block th:each="cate:${categoryList}">
+                      <option th:value="${cate.cate_id}" th:text="${cate.cate_name}"></option>
+                    </th:block>
+
+                  </datalist>
+                </td>
+              </tr>
+
+              <tr>
+                <td ><label>是否是高级属性</label></td>
+                <td >
+                  <select name="key_ishigh">
+                    <option value="0">否</option>
+                    <option value="1">是</option>
+                  </select>
+                </td>
+                </td>
+              </tr>
+            </tbody>
+            <tfoot>
+            <tr>
+              <td colspan="2">
+                <button class="button" >添加提交</button>
+              </td>
+            </tr>
+            </tfoot>
+          </table>
+          </form>
+        </div>
+
+      </div>
+      <!-- End .content-box-content -->
+    </div>
+
+    <th:block th:include="inc/muban :: footer"></th:block>
+  </div>
+  <!-- End #main-content -->
+  <script>
+
+   $(function(){
+      $(document).on("click",".addvaluebtn",function(){
+        $(".valuelist").append(`
+        <div class="valuex">
+                <input class="text-input small-input" type="text" id="small-input" name="value_name"><button class="valuejian" type="button">×</button>
+              </div>
+      `);
+      })
+    })
+
+
+
+    $(function(){
+      $(document).on("click",".valuejian",function(){
+        $(this).parent().remove();
+      })
+    })
+
+    $(".sel_key_issku").change(function(){
+      let val=$(this).val();
+      if(val==1){
+        $(".tr_value_name").empty();
+        $(".addvaluebtn").remove();
+      }
+      if(val==0){
+        $(".td_value_name").append(`<button class="button addvaluebtn" type="button">添加属性值</button>`)
+        $(".tr_value_name").append(`
+          <td ><label>属性值</label></td>
+                  <td >
+                    <div class="valuelist">
+                      <div class="valuex">
+                        <input class="text-input small-input" type="text" id="small-input" name="value_name" >
+                        <button class="valuejian" type="button">×</button>
+                      </div>
+
+                    </div>
+
+                  </td>
+        `)
+      }
+    })
+  </script>
+</div>
+</body>
+<!-- Download From www.exet.tk-->
+</html>

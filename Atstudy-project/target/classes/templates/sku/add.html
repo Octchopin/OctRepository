@@ -1,0 +1,191 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+  <!--代表使用inc目录下模板是muban.html中的叫header的模块中间的内容-->
+  <th:block th:include="inc/muban :: header" />
+  <style>
+    .listlabel{
+      display:inline;
+      font-weight:normal;
+    }
+  </style>
+  <script type="text/javascript" th:src="@{/resources/scripts/jquery-3.6.0.js}"></script>
+</head>
+<body>
+<div id="body-wrapper">
+  <!-- Wrapper for the radial gradient background -->
+  <div id="sidebar">
+    <th:block th:include="inc/muban :: sidebar" />
+   </div>
+  <!-- End #sidebar -->
+  <div id="main-content">
+    <!-- Page Head -->
+    <h2>规格管理</h2>
+    <!-- End .shortcut-buttons-set -->
+    <div class="clear"></div>
+    <!-- End .clear -->
+    <div class="content-box">
+      <!-- Start Content Box -->
+      <div class="content-box-header">
+        <h3>添加规格</h3>
+        <div class="clear"></div>
+      </div>
+      <!-- End .content-box-header -->
+
+      <div class="content-box-content">
+        <div class="tab-content default-tab">
+          <h1>当前spu的sku列表有：</h1>
+          <table>
+            <thead>
+            <tr>
+              <th width="80px">SKU ID</th>
+              <th width="250px">sku标题</th>
+              <th width="40px">sku价格</th>
+              <th width="40px">sku库存</th>
+              <th >操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            <th:block th:each="sku:${skuList}">
+              <tr>
+                <td th:text="${sku.sku_id}">Lorem ipsum dolor</td>
+                <td th:text="${sku.sku_name}">
+                </td>
+                <td th:text="${sku.sku_price}">
+                </td>
+                <td th:text="${sku.sku_quantity}">
+                </td>
+                <td th:text="${#dates.format(sku.createtime,'yyyy-MM-dd')}">
+                </td>
+                </td>
+                <td th:text="${#dates.format(sku.updatetime,'yyyy-MM-dd')}">
+                </td>
+                <td>
+                  <a th:href="@{/sku/delete(sku_id=${sku.sku_id},spu_id=${sku.sku_spu_id})}" onclick='return confirm("确定要删除商品吗？");' title="删除商品"><img th:src="@{/resources/images/icons/cross.png}" alt="删除员工" /></a>
+                </td>
+              </tr>
+
+            </th:block>
+            </tbody>
+          </table>
+
+          <hr />
+
+
+          <form th:action="@{/sku/save}" method="post" enctype="multipart/form-data">
+            <input type="hidden" name="spu_id" th:value="${spu.spu_id}">
+          <table>
+            <thead>
+              <tr>
+                <th width="150px">属性</th>
+                <th >值</th>
+              </tr>
+            </thead>
+
+            <tbody>
+            <tr>
+              <th width="150px">商品名</th>
+              <th >
+                <span class="span_spu_name"><th:block th:text="${spu.spu_name}"></span></th:block>
+              </th>
+            </tr>
+              <tr>
+                <td ><label>选择规格属性</label>
+                  <font color="red" th:text="${msg}"></font>
+                </td>
+                <td >
+                  <div class="shaixuan">
+
+                    <div class="keyvalue" th:each="key,vs:${keyList}">
+                      <span style="font-size:18px" th:text="${key.key_name}">
+                      </span>
+                      <label class="listlabel" th:each="value,vj:${key.valueList}">
+                        <input type="radio" th:class="${'val_'+vs.index}" th:name="${'valList['+vs.index+']'}" th:index="${vs.index}" th:value="${value.value_id}" onclick="qiming(this)">
+                        <span><th:block th:text="${value.value_name}"></th:block></span>
+                      </label>
+
+                    </div>
+                  </div>
+
+                </td>
+              </tr>
+              <tr>
+                <td ><label>sku名称</label></td>
+                <td >
+                  <input class="text-input small-input sku_name" type="text" id="small-input" name="sku_name" readonly>
+                </td>
+              </tr>
+              <tr>
+                <td ><label>价格</label></td>
+                <td >
+                  <input class="text-input small-input sku_price" type="text" id="small-input" name="sku_price">
+                </td>
+              </tr>
+              <tr>
+                <td ><label>库存</label></td>
+                <td >
+                  <input class="text-input small-input sku_quantity" type="text" id="small-input" name="sku_quantity">
+                </td>
+                </td>
+              </tr>
+            </tbody>
+            <tfoot>
+            <tr>
+              <td colspan="2">
+                <button  class="button addskubtn" >添加提交</button>
+                <font color="red" class="errormsg"></font>
+              </td>
+            </tr>
+            </tfoot>
+          </table>
+          </form>
+        </div>
+
+      </div>
+      <!-- End .content-box-content -->
+    </div>
+
+    <th:block th:include="inc/muban :: footer"></th:block>
+  </div>
+  <!-- End #main-content -->
+
+  <script>
+
+    let arr=new Array($(".keyvalue").length);
+    //保存当前选择的value_id
+    let valuearr=new Array($(".keyvalue").length);
+    function qiming(ele){
+
+    $(".sku_price").val("");
+    $(".sku_quantity").val("");
+
+      let sku_name=$(".span_spu_name").text()+" "
+      let cname=$(ele).attr("class");
+      let index=cname.split("_")[1];
+      arr[index]=$(ele).next().text();
+      let str=arr.join(" ");
+      sku_name=sku_name+str;
+       $(".sku_name").val(sku_name);
+
+
+       //获取当前选中value_id 根据value_id去数据库中取值
+       //let val_id=$(ele).val()
+       //valuearr[index]=val_id;
+       //console.log(valuearr)
+       $.get("http://localhost:8080/sku/getSku?sku_name="+sku_name,function(data){
+          console.log(data)
+          if(data.sku_name!=null){
+              $(".sku_price").val(data.sku_price);
+              $(".sku_quantity").val(data.sku_quantity);
+              $(".addskubtn").prop("disabled",true)
+              $(".errormsg").text("当前sku已存在，不能提交")
+          }else{
+                $(".addskubtn").prop("disabled",false)
+                $(".errormsg").text("")
+          }
+       })
+    }
+  </script>
+</div>
+</body>
+<!-- Download From www.exet.tk-->
+</html>

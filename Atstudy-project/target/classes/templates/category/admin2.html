@@ -1,0 +1,182 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+  <!--代表使用inc目录下模板是muban.html中的叫header的模块中间的内容-->
+  <th:block th:include="inc/muban :: header" />
+  <style>
+   .yi a{
+      padding:4px 5px;
+      background:#9aa18f;
+      color:#fff;
+      border-radius:3px;
+      font-size:12px;
+    }
+    .yi a:hover{
+      background:#9adf8f;
+    }
+    .yi{
+      background:#dbe3ff;
+      border:1px solid #a2b4ee;
+      margin:5px;
+      padding:10px 10px;
+      border-radius:5px;
+      color: #585b66;
+      cursor:pointer;
+      position:relative;
+    }
+
+    .yi a.a1{
+      position:absolute;
+      right:100px;
+    }
+    .yi a.a2{
+      position:absolute;
+      right:55px;
+    }
+    .yi:hover{
+      color:#000;
+    }
+
+    .er{
+      background:#dee9ff;
+      border:1px solid #a2b9ee;
+      margin:5px;
+      padding:10px 10px;
+      border-radius:5px;
+      color: #585b66;
+      display:none;
+      cursor:pointer;
+       position:relative;
+    }
+    .er:hover{
+     color:#000;
+    }
+
+     .er a.a3{
+      position:absolute;
+      right:100px;
+    }
+    .er a.a4{
+      position:absolute;
+      right:55px;
+    }
+
+    .san{
+      background:#deefff;
+      border:1px solid #a2bfee;
+      margin:5px;
+      padding:5px 10px;
+      border-radius:5px;
+      color: #585b66;
+      display:none;
+       position:relative;
+    }
+     .san a.a5{
+      position:absolute;
+      right:55px;
+    }
+
+    .yi a.del{
+      position:absolute;
+      right:10px;
+
+      background:#f00;
+    }
+  </style>
+</head>
+<body>
+<div id="body-wrapper">
+  <!-- Wrapper for the radial gradient background -->
+  <div id="sidebar">
+    <th:block th:include="inc/muban :: sidebar" />
+   </div>
+  <!-- End #sidebar -->
+  <div id="main-content">
+    <!-- Page Head -->
+    <h2>分类管理</h2>
+    <!-- End .shortcut-buttons-set -->
+    <div class="clear"></div>
+    <!-- End .clear -->
+    <div class="content-box">
+      <!-- Start Content Box -->
+      <div class="content-box-header">
+        <h3>分类管理</h3>
+        <div class="clear"></div>
+      </div>
+      <!-- End .content-box-header -->
+      <div class="content-box-content">
+        <div class="tab-content default-tab">
+          <a class="button" th:href="@{/category/add}">添加分类</a>
+
+
+          <th:block th:each="yi:${category1List}" >
+            <div class="yi" style="font-size:14px">
+             <div> I <th:block th:text="${yi.cate_name}"></th:block>
+               <a class="a1" th:href="@{/category/add(cate_id=${yi.cate_id})}">添加子分类</a>
+               <a class="a2" th:href="@{/category/update(cate_id=${yi.cate_id})}">修改</a>
+               <a class="del" th:href="@{/category/delete(cate_id=${yi.cate_id})}" onclick='return confirm("确定删除分类吗？");'>删除</a>
+             </div>
+
+
+              <th:block th:each="er:${yi.category2List}" >
+                <div class="er" style="font-size:14px">
+                 <div> II <th:block th:text="${er.cate_name}"></th:block>
+                   <a class="a3"th:href="@{/category/add(cate_id=${er.cate_id})}">添加子分类</a>
+                   <a class="a4" th:href="@{/category/update(cate_id=${er.cate_id})}">修改</a>
+                   <a class="del" th:href="@{/category/delete(cate_id=${er.cate_id})}" onclick='return confirm("确定删除分类吗？");'>删除</a>
+                 </div>
+
+                  <th:block th:each="san:${er.category3List}" th:if="${san.cate_parentid==er.cate_id}">
+                    <div class="san" style="font-size:14px">
+                      <div>III <th:block th:text="${san.cate_name}"></th:block>
+                        <a class="a5" th:href="@{/category/update(cate_id=${san.cate_id})}">修改</a>
+                        <a class="del" th:href="@{/category/delete(cate_id=${san.cate_id})}" onclick='return confirm("确定删除分类吗？");'>删除</a>
+                      </div>
+                    </div>
+                  </th:block>
+                </div>
+
+
+
+              </th:block>
+
+            </div>
+
+            <!--二级权限的pid等于一级权限的id-->
+
+
+          </th:block>
+
+
+
+        </div>
+
+      </div>
+      <!-- End .content-box-content -->
+    </div>
+
+    <th:block th:include="inc/muban :: footer"></th:block>
+  </div>
+  <!-- End #main-content -->
+</div>
+<script>
+  $(function(){
+    $(".yi").click(function(){
+      $(this).siblings().find(".er").slideUp()
+      $(this).siblings().find(".san").slideUp()
+      $(this).find(".er").slideToggle(500);
+    })
+
+    $(".er").click(function(e){
+      e.stopPropagation();
+      $(this).siblings().find(".san").slideUp()
+      $(this).find(".san").slideToggle(500);
+    })
+
+     $(".san").click(function(e){
+      e.stopPropagation();
+    })
+  })
+</script>
+</body>
+<!-- Download From www.exet.tk-->
+</html>

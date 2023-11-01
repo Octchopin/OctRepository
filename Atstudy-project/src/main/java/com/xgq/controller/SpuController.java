@@ -5,9 +5,7 @@ import com.xgq.pojo.*;
 import com.xgq.service.BrandService;
 import com.xgq.service.CategoryService;
 import com.xgq.service.SpuService;
-import jdk.internal.org.objectweb.asm.tree.analysis.Value;
-import jdk.nashorn.internal.runtime.FindProperty;
-import org.apache.ibatis.annotations.Param;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

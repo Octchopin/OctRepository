@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xgq.dao.BrandDao">
+    <select id="findBrand" resultType="com.xgq.pojo.Brand">
+        select *
+        from brand
+    </select>
+    <insert id="savaBrand" keyProperty="brand_id" useGeneratedKeys="true">
+        insert into brand (brand_id, brand_name, brand_introduction, brand_logourl, sortno, createtime,  updatetime)
+        values (#{brand_id}, #{brand_name}, #{brand_introduction}, #{brand_logourl}, #{sortno}, now(), now())
+    </insert>
+    <delete id="deleteBrandCategory" >
+        delete
+        from brand_categories
+        where brand_id = #{brand_id}
+    </delete>
+    <delete id="deleteBrand">
+        delete
+        from brand
+        where brand_id = #{brand_id}
+    </delete>
+    <select id="findOneBrand" resultMap="brandMap1">
+        select *
+        from brand
+        where brand_id = #{brand_id}
+    </select>
+    <resultMap id="brandMap1" type="com.xgq.pojo.Brand">
+        <id column="brand_id" property="brand_id"></id>
+        <result column="brand_name" property="brand_name"></result>
+        <result column="brand_introduction" property="brand_introduction"></result>
+        <result column="brand_logourl" property="brand_logourl"></result>
+        <result column="sortno" property="sortno"></result>
+        <result column="createtime" property="createtime"></result>
+        <collection property="categoryList" column="brand_id" ofType="com.xgq.pojo.Category" select="com.xgq.dao.BrandDao.findCategoryList" fetchType="lazy"></collection>
+    </resultMap>
+    <select id="findCategoryList" resultType="com.xgq.pojo.Category">
+        SELECT c.* FROM brand_categories bc INNER JOIN category c ON  c.cate_id=bc.category_id WHERE bc.brand_id=#{brand_id}
+    </select>
+<!--    与分类表关联的ischecked查询 -->
+<!--  <select id="findCategoryList" resultType="com.xgq.pojo.Category">-->
+<!--          SELECT pn.*, c.cate_id ischecked-->
+<!--        FROM category pn-->
+<!--                 LEFT JOIN (SELECT p.cate_id  FROM brand_categories rp  INNER JOIN category p ON p.cate_id = rp.category_id WHERE rp.brand_id = #{brand_id}) c ON pn.cate_id = c.cate_id-->
+<!--   </select>-->
+    <!--    更新前删除品牌与分类的关联-->
+<!--    <delete id='deleteBrandCategoryByBrand_id' >-->
+<!--        delete-->
+<!--        from brand_categories-->
+<!--        where brand_id = #{brand_id}-->
+<!--    </delete>-->
+    <update id="updateOneBrand" >
+
+        update brand
+
+        <set>
+            <if test="brand_name!=null and brand_name!=''"> brand_name=#{brand_name},</if>
+            <if test="brand_introduction!=null and brand_introduction!=''"> brand_introduction=#{brand_introduction},</if>
+            <if test="brand_logourl!=null and brand_logourl!=''"> brand_logourl=#{brand_logourl},</if>
+            <if test="sortno!=null and sortno!=''"> sortno=#{sortno},</if>
+        </set>
+            where brand_id = #{brand_id}
+
+    </update>
+    <insert id="insertBrandCategory" useGeneratedKeys="true" keyProperty="id" >
+        insert into brand_categories (brand_id,category_id)
+        values
+        <foreach collection="cate_ids" item="cate_id" separator=",">
+            (#{brand_id},#{cate_id})
+        </foreach>
+    </insert>
+</mapper>

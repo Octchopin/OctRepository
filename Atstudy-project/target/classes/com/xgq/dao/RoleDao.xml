@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xgq.dao.RoleDao">
+    <select id="findRoleListByAdminId" resultType="com.xgq.pojo.Role">
+        select r.*
+        from admin_role ar
+                 inner join role r on ar.role_id = r.role_id
+        where ar.admin_id = #{admin_id}
+    </select>
+    <select id="getRoleListByOperateUrl" resultType="com.xgq.pojo.Role">
+        select r.*
+        from operate o
+                 inner join permission_operate po on po.operate_id = o.operate_id
+                 inner join permission p on p.permission_id = po.permission_id
+                 inner join role_permission rp on rp.permission_id = p.permission_id
+                 inner join `role` r on r.role_id = rp.role_id
+        where #{operate_url} like concat('%', o.operate_url, '%')
+    </select>
+
+    <select id="findAllRole" resultMap="roleMap1">
+        select *
+        from ROLE
+    </select>
+
+    <resultMap id="roleMap1" type="com.xgq.pojo.Role">
+        <id column="role_id" property="role_id"></id>
+        <result column="role_name" property="role_name"></result>
+        <collection property="permissionList" ofType="com.xgq.pojo.Permission" column="role_id"
+                    select="com.xgq.dao.RoleDao.findRolePermissionList" fetchType="lazy"></collection>
+    </resultMap>
+
+    <select id="findCheckedRoleListByAdminId" resultType="com.xgq.pojo.Role">
+        SELECT rn.*, g.role_id AS ischecked
+        FROM role rn
+                 LEFT JOIN
+             (SELECT r.*
+              FROM admin_role ar
+                       INNER JOIN role r ON ar.role_id = r.role_id
+              WHERE admin_id = #{admin_id}) g
+             ON g.role_id = rn.role_id
+    </select>
+    <select id="findRolePermissionList" resultType="com.xgq.pojo.Permission">
+        select p.*
+        from role_permission rp
+                 inner join permission p on p.permission_id = rp.permission_id
+        where rp.role_id = #{role_id}
+    </select>
+    <select id="findAllPermissionList" resultType="com.xgq.pojo.Permission">
+        select *
+        from permission
+    </select>
+    <insert id="insertRole" keyProperty="role_id" useGeneratedKeys="true">
+        insert into role (role_name)
+        values (#{role_name})
+    </insert>
+    <insert id="insertRolePermission">
+        insert into role_permission (role_id,permission_id)
+        values
+        <foreach collection="permission_ids" item="permission_id" separator=",">
+            (#{role_id},#{permission_id})
+        </foreach>
+    </insert>
+    <delete id="deleteRolePermission">
+        delete
+        from role_permission
+        where role_id = #{role_id}
+    </delete>
+    <delete id="deleteRoleByRole_id">
+        delete
+        from role
+        where role_id = #{role_id}
+    </delete>
+    <select id="findRoleById" resultMap="roleMap2">
+        select *
+        from role
+        where role_id = #{role_id}
+    </select>
+    <resultMap id="roleMap2" type="com.xgq.pojo.Role">
+        <id column="role_id" property="role_id"></id>
+        <result column="role_name" property="role_name"></result>
+
+        <collection property="permissionList" ofType="com.xgq.pojo.Permission" column="role_id" fetchType="lazy"
+                    select="com.xgq.dao.RoleDao.findIsCheckedRolePermissionList"></collection>
+    </resultMap>
+    <select id="findIsCheckedRolePermissionList" resultType="com.xgq.pojo.Permission">
+        SELECT pn.*, c.permission_id ischecked
+        FROM permission pn
+                 LEFT JOIN (SELECT p.permission_id
+                            FROM role_permission rp
+                                     INNER JOIN permission p ON p.permission_id = rp.permission_id
+                            WHERE rp.role_id = #{role_id}) c ON pn.permission_id = c.permission_id
+    </select>
+
+
+    <update id="updateRole" >
+        update role
+        set role_name = #{role_name}
+        where role_id=#{role_id}
+    </update>
+</mapper>

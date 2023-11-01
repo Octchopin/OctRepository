@@ -1,0 +1,48 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+  <!--代表使用inc目录下模板是muban.html中的叫header的模块中间的内容-->
+  <th:block th:include="inc/muban :: header" />
+  <style>
+    .listlabel{
+      display:inline;
+      font-weight:normal;
+    }
+  </style>
+</head>
+<body>
+<div id="body-wrapper">
+  <!-- Wrapper for the radial gradient background -->
+  <div id="sidebar">
+    <th:block th:include="inc/muban :: sidebar" />
+   </div>
+  <!-- End #sidebar -->
+  <div id="main-content">
+    <!-- Page Head -->
+    <h2>操作提示</h2>
+    <!-- End .shortcut-buttons-set -->
+    <div class="clear"></div>
+    <!-- End .clear -->
+    <div class="content-box">
+      <!-- Start Content Box -->
+      <div class="content-box-header">
+        <h3></h3>
+        <div class="clear"></div>
+      </div>
+      <!-- End .content-box-header -->
+
+      <div class="content-box-content">
+        <div class="tab-content default-tab">
+          <h1 th:text="${msg}"></h1>
+        </div>
+
+      </div>
+      <!-- End .content-box-content -->
+    </div>
+
+    <th:block th:include="inc/muban :: footer"></th:block>
+  </div>
+  <!-- End #main-content -->
+</div>
+</body>
+<!-- Download From www.exet.tk-->
+</html>

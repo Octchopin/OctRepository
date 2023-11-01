@@ -1,0 +1,105 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+  <!--代表使用inc目录下模板是muban.html中的叫header的模块中间的内容-->
+  <th:block th:include="inc/muban :: header" />
+  <style>
+    label{
+      display:inline !important;
+      font-weight:normal;
+    }
+  </style>
+</head>
+<body>
+<div id="body-wrapper">
+  <!-- Wrapper for the radial gradient background -->
+  <div id="sidebar">
+    <th:block th:include="inc/muban :: sidebar" />
+   </div>
+  <!-- End #sidebar -->
+  <div id="main-content">
+    <!-- Page Head -->
+    <h2>分类管理</h2>
+    <!-- End .shortcut-buttons-set -->
+    <div class="clear"></div>
+    <!-- End .clear -->
+    <div class="content-box">
+      <!-- Start Content Box -->
+      <div class="content-box-header">
+        <h3>修改分类</h3>
+        <div class="clear"></div>
+      </div>
+      <!-- End .content-box-header -->
+
+      <div class="content-box-content">
+        <div class="tab-content default-tab">
+          <form th:action="@{/category/alter}" method="post">
+          <table>
+            <thead>
+              <tr>
+                  <th width="150px">分类</th>
+                  <th >
+                    分类信息
+                    <input type="hidden" name="cate_parentid" th:value="${category.cate_parentid}">
+                  </th>
+              </tr>
+            </thead>
+
+            <tbody>
+            <tr>
+              <td ><label>分类id</label></td>
+              <td >
+                <input class="text-input small-input" type="text" id="small-input" readonly name="cate_id" th:value="${category.cate_id}">
+              </td>
+            </tr>
+              <tr>
+                <td ><label>分类名字</label></td>
+                <td >
+                  <input class="text-input small-input" type="text" id="small-input" name="cate_name" th:value="${category.cate_name}">
+                </td>
+              </tr>
+              <tr>
+                <td ><label>分类排序</label></td>
+                <td >
+                  <input class="text-input small-input" type="text" id="small-input" name="cate_sort"  th:value="${category.cate_sort}">
+                </td>
+              </tr>
+              <tr>
+                <td ><label>频道</label></td>
+                <td >
+                  <input class="text-input small-input" type="text" id="small-input" name="cate_channel" th:value="${category.cate_channel}">
+                </td>
+              </tr>
+            <tr>
+              <td ><label>品牌选择</label></td>
+              <td >
+                <th:block th:each="brand:${category.brandList}" >
+                  <label class="yi" >
+                    <input name="brand_ids" th:value="${brand.brand_id}" type="checkbox" th:checked="${brand.ischecked!=null}">
+                    <th:block th:text="${brand.brand_name}"></th:block>
+                  </label>
+                </th:block>
+              </td>
+            </tr>
+            </tbody>
+            <tfoot>
+            <tr>
+              <td colspan="2">
+                <button class="button" >提交子分类</button>
+              </td>
+            </tr>
+            </tfoot>
+          </table>
+          </form>
+        </div>
+
+      </div>
+      <!-- End .content-box-content -->
+    </div>
+
+    <th:block th:include="inc/muban :: footer"></th:block>
+  </div>
+  <!-- End #main-content -->
+</div>
+</body>
+<!-- Download From www.exet.tk-->
+</html>

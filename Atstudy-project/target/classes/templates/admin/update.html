@@ -1,0 +1,114 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+  <!--代表使用inc目录下模板是muban.html中的叫header的模块中间的内容-->
+  <th:block th:include="inc/muban :: header" />
+  <style>
+    .listlabel{
+      display:inline;
+      font-weight:normal;
+    }
+  </style>
+</head>
+<body>
+<div id="body-wrapper">
+  <!-- Wrapper for the radial gradient background -->
+  <div id="sidebar">
+    <th:block th:include="inc/muban :: sidebar" />
+   </div>
+  <!-- End #sidebar -->
+  <div id="main-content">
+    <!-- Page Head -->
+    <h2>员工管理</h2>
+    <!-- End .shortcut-buttons-set -->
+    <div class="clear"></div>
+    <!-- End .clear -->
+    <div class="content-box">
+      <!-- Start Content Box -->
+      <div class="content-box-header">
+        <h3>修改员工</h3>
+        <div class="clear"></div>
+      </div>
+      <!-- End .content-box-header -->
+
+      <div class="content-box-content">
+        <div class="tab-content default-tab">
+          <form th:action="@{/admin/alter}" method="post">
+          <table>
+            <thead>
+              <tr>
+                <th width="150px">
+                  <label>员工的id</label>
+                </th>
+                <th >
+                  <input type="text" name="admin_id" readonly th:value="${admin.admin_id}">
+                </th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr>
+                <td ><label>员工姓名</label></td>
+                <td >
+                  <input class="text-input small-input" type="text" id="small-input" name="admin_name" th:value="${admin.admin_name}">
+                </td>
+              </tr>
+              <tr>
+                <td ><label>员工密码</label></td>
+                <td >
+                  <input class="text-input small-input" type="text" id="small-input" name="admin_pass" >
+                </td>
+              </tr>
+              <tr>
+                <td ><label>昵称</label></td>
+                <td >
+                  <input class="text-input small-input" type="text" id="small-input" name="admin_nickname" th:value="${admin.admin_nickname}">
+                </td>
+              </tr>
+              <tr>
+                <td ><label>员工角色</label></td>
+                <td >
+
+                  <th:block th:each="r:${admin.roleList}">
+                    <!--如果ischecked为空，页面就不选中-->
+                    <th:block th:if="${r.ischecked==null}">
+                      <label class="listlabel">
+                        <input name="role_ids" th:value="${r.role_id}" type="checkbox" >
+                        <th:block th:text="${r.role_name}"></th:block>
+                      </label>
+                    </th:block>
+                    <!--如果页面ischecked不为空，页面就选中-->
+                    <th:block th:if="${r.ischecked!=null}">
+                      <label class="listlabel">
+                        <input name="role_ids" th:value="${r.role_id}" type="checkbox" checked>
+                        <th:block th:text="${r.role_name}"></th:block>
+                      </label>
+                    </th:block>
+
+                  </th:block>
+
+
+                </td>
+              </tr>
+            </tbody>
+            <tfoot>
+            <tr>
+              <td colspan="2">
+                <button class="button" >添加提交</button>
+              </td>
+            </tr>
+            </tfoot>
+          </table>
+          </form>
+        </div>
+
+      </div>
+      <!-- End .content-box-content -->
+    </div>
+
+    <th:block th:include="inc/muban :: footer"></th:block>
+  </div>
+  <!-- End #main-content -->
+</div>
+</body>
+<!-- Download From www.exet.tk-->
+</html>

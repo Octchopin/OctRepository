@@ -1,0 +1,155 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+  <!--代表使用inc目录下模板是muban.html中的叫header的模块中间的内容-->
+  <th:block th:include="inc/muban :: header" />
+  <style>
+    .fou{
+      background:#dd0000;
+      color:#fff;
+      padding:2px;
+      border-radius:5px;
+    }
+    .shi{
+      background:#00dd00;
+      color:#fff;
+      padding:5px;
+      border-radius:5px;
+    }
+    .cate{
+      background:#4444ff;
+      padding:2px 5px;
+      border-radius:5px;
+      color:#fff;
+    }
+
+    a.xia.button{
+      background:#cc0000 !important;
+    }
+    a.xia.button:hover{
+     background:#aa0000 !important;
+    }
+    .shang{
+      background:#00cc00;
+    }
+  </style>
+</head>
+<body>
+<div id="body-wrapper">
+  <!-- Wrapper for the radial gradient background -->
+  <div id="sidebar">
+    <th:block th:include="inc/muban :: sidebar" />
+   </div>
+  <!-- End #sidebar -->
+  <div id="main-content">
+    <!-- Page Head -->
+    <h2>参数管理</h2>
+    <!-- End .shortcut-buttons-set -->
+    <div class="clear"></div>
+    <!-- End .clear -->
+    <div class="content-box">
+      <!-- Start Content Box -->
+      <div class="content-box-header">
+        <h3>商品管理</h3>
+        <div class="clear"></div>
+      </div>
+      <!-- End .content-box-header -->
+      <div class="content-box-content">
+        <div class="tab-content default-tab">
+          <form th:action="@{/sku/admin}" method="post">
+
+            <input  class="text-input small-input"  placeholder="商品名" name="spu_name" th:value="${spu_name}">
+            <input  class="text-input small-input"  placeholder="sku标题" name="sku_name" th:value="${sku_name}">
+            <input  class="button"  type="submit" value="搜索">
+          </form>
+          <table>
+            <thead>
+              <tr>
+                <th width="80px">SKU ID</th>
+                <th width="250px">商品名</th>
+                <th width="350px">sku标题</th>
+                <th width="40px">sku价格</th>
+                <th width="40px">sku库存</th>
+                <th width="70px">创建时间</th>
+                <th width="70px">更新时间</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tfoot>
+              <tr>
+                <td colspan="6">
+                  <div class="bulk-actions align-left">
+                    当前是第
+                    <span th:text="${pager.pageNum}"></span>
+                   页
+                  </div>
+
+                  <div class="pagination">
+                    <a th:href="@{/sku/admin(spu_name=${spu_name},sku_name=${sku_name})}" title="First Page">&laquo; First</a>
+                    <a th:href="@{/sku/admin(page=${pager.prePage},spu_name=${spu_name},sku_name=${sku_name})}" title="Previous Page" th:if="${pager.pageNum>1}">&laquo; Previous</a>
+                    <span th:class="number" title="1"  th:if="${pager.PageNum>=7}">...</span>
+                    <th:block th:each="i:${#numbers.sequence(1, pager.pages)}" th:if="${pager.pages<=10 }">
+
+                      <a th:href="@{/sku/admin(page=${i},spu_name=${spu_name},sku_name=${sku_name})}" th:class="${i==pager.pageNum?'number current':'number'}" title="1" th:text="${i}">1</a>
+                    </th:block>
+                    <th:block th:each="i:${#numbers.sequence(1, 10)}" th:if="${pager.PageNum<7 and pager.pageNum>=1 and pager.pages>10}">
+
+                      <a th:href="@{/sku/admin(page=${i},spu_name=${spu_name},sku_name=${sku_name})}" th:class="${i==pager.pageNum?'number current':'number'}" title="1" th:text="${i}">1</a>
+                    </th:block>
+                    <th:block th:each="i:${#numbers.sequence(pager.PageNum-5, pager.PageNum+4)}" th:if="${pager.PageNum>=7 and pager.pageNum<=pager.pages-4 and pager.pages>10}">
+
+                      <a th:href="@{/sku/admin(page=${i},spu_name=${spu_name},sku_name=${sku_name})}" th:class="${i==pager.pageNum?'number current':'number'}" title="1" th:text="${i}">1</a>
+                    </th:block>
+                    <th:block th:each="i:${#numbers.sequence(pager.pages-9, pager.pages)}" th:if="${pager.pageNum>pager.pages-4 and pager.pageNum<=pager.pages and pager.pages>10}">
+
+                      <a th:href="@{/sku/admin(page=${i},spu_name=${spu_name},sku_name=${sku_name})}" th:class="${i==pager.pageNum?'number current':'number'}" title="1" th:text="${i}">1</a>
+                    </th:block>
+                    <span th:class="number" title="1"  th:if="${pager.pageNum<pager.pages-4 and pager.pages>10}">...</span>
+                    <a th:href="@{/sku/admin(page=${pager.nextPage},spu_name=${spu_name},sku_name=${sku_name})}" title="Next Page" th:if="${pager.pageNum<pager.pages }">Next &raquo;</a>
+                    <a th:href="@{/sku/admin(page=${pager.pages},spu_name=${spu_name},sku_name=${sku_name})}" title="Last Page">Last &raquo;</a> </div>
+                  <!-- End .pagination -->
+                  <div class="clear"></div>
+                  <!-- End .pagination -->
+                  <div class="clear"></div>
+                </td>
+              </tr>
+            </tfoot>
+            <tbody>
+              <th:block th:each="sku:${pager.list}">
+              <tr>
+                <td th:text="${sku.sku_id}">Lorem ipsum dolor</td>
+                <td th:text="${sku.spu.spu_name}"></td>
+                <td th:text="${sku.sku_name}">
+                </td>
+                <td th:text="${sku.sku_price}">
+                </td>
+                <td th:text="${sku.sku_quantity}">
+                </td>
+                <td th:text="${#dates.format(sku.createtime,'yyyy-MM-dd')}">
+                </td>
+                </td>
+                <td th:text="${#dates.format(sku.updatetime,'yyyy-MM-dd')}">
+                </td>
+                <td>
+                    <a th:href="@{/sku/update/{sku_id}(sku_id=${sku.sku_id})}" title="编辑商品"><img th:src="@{/resources/images/icons/pencil.png}" alt="编辑员工" /></a>
+                    <a th:href="@{/sku/delete(sku_id=${sku.sku_id},spu_id=${sku.spu.spu_id})}" onclick='return confirm("确定要删除商品吗？");' title="删除商品"><img th:src="@{/resources/images/icons/cross.png}" alt="删除员工" /></a>
+
+
+                  <!-- Icons -->
+                  </td>
+              </tr>
+              </th:block>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+      <!-- End .content-box-content -->
+    </div>
+
+    <th:block th:include="inc/muban :: footer"></th:block>
+  </div>
+  <!-- End #main-content -->
+</div>
+</body>
+<!-- Download From www.exet.tk-->
+</html>

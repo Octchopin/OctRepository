@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xgq.dao.AdminDao">
+
+<!--    根据用户名获取用户对象-->
+    <select id="findAdminByUsername" resultMap="AdminMap">
+        select *
+        from admin where admin_name=#{username};
+    </select>
+    <resultMap id="AdminMap" type="com.xgq.pojo.Admin">
+        <id property="admin_id" column="admin_id" ></id>
+        <result column="admin_name" property="admin_name"></result>
+        <result column="admin_pass" property="admin_pass"></result>
+        <result column="admin_nickname" property="admin_nickname"></result>
+       <collection property="roleList"
+                   ofType="com.xgq.pojo.Role"
+                   column="admin_id"
+                   select="com.xgq.dao.RoleDao.findRoleListByAdminId"
+                   fetchType="lazy">
+
+       </collection>
+    </resultMap>
+
+    <select id="findAllAdmin" resultMap="AdminMap">
+        select *
+        from admin
+    </select>
+    <insert id="addAdmin" useGeneratedKeys="true" keyProperty="admin_id" >
+        insert into admin (admin_name,admin_nickname,admin_pass)
+        values (#{admin_name},#{admin_nickname},#{admin_pass});
+    </insert>
+    <insert id="insertAdminRole" >
+        insert into admin_role (admin_id,role_id )
+        values
+<foreach collection="role_ids" separator="," item="role_id">
+    (#{admin_id},#{role_id})
+</foreach>
+    </insert>
+<!--删除角色和用户的关系-->
+<delete id="deleteAdmin_RoleByAdmin_id" >
+    delete
+    from admin_role
+    where admin_id=#{admin_id}
+</delete>
+<!--    删除用户的信息-->
+    <delete id='deleteAdmin' >
+        delete
+        from admin
+        where admin_id=#{admin_id}
+    </delete>
+
+    <select id="findAdminByAdmin_id" resultMap="AdminMap2">
+        select *
+        from admin where admin_id=#{admin_id}
+    </select>
+    <resultMap id="AdminMap2" type="com.xgq.pojo.Admin">
+        <id property="admin_id" column="admin_id" ></id>
+        <result column="admin_name" property="admin_name"></result>
+        <result column="admin_pass" property="admin_pass"></result>
+        <result column="admin_nickname" property="admin_nickname"></result>
+        <collection property="roleList"
+                    ofType="com.xgq.pojo.Role"
+                    column="admin_id"
+                    select="com.xgq.dao.RoleDao.findCheckedRoleListByAdminId"
+                    fetchType="lazy">
+
+        </collection>
+    </resultMap>
+    <update id="updateAdmin" >
+        update admin
+        <set>
+            <if test="admin_name!=null and admin_name!=''">
+                admin_name=#{admin_name},
+            </if>
+            <if test="admin_nickname!=null and admin_nickname!=''">
+                admin_nickname=#{admin_nickname},
+            </if>
+            <if test="admin_pass!=null and admin_pass!=''">
+                admin_pass=#{admin_pass},
+            </if>
+
+        </set>
+        where admin_id=#{admin_id}
+    </update>
+<!--更新用户信息表和更新用户和角色的关联表-->
+    <delete id='deleteAdmin_roleByAdmin_id' >
+        delete
+        from admin_role
+        where admin_id=#{admin_id}
+    </delete>
+
+    <update id="updateAdminRole" >
+        insert into admin_role (admin_id,role_id)
+        values
+        <foreach collection="role_ids" separator="," item="role_id">
+            (#{admin_id},#{role_id})
+        </foreach>
+    </update>
+</mapper>

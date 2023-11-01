@@ -1,0 +1,165 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+  <!--代表使用inc目录下模板是muban.html中的叫header的模块中间的内容-->
+  <th:block th:include="inc/muban :: header" />
+  <style>
+    .fou{
+      background:#dd0000;
+      color:#fff;
+      padding:2px;
+      border-radius:5px;
+    }
+    .shi{
+      background:#00dd00;
+      color:#fff;
+      padding:5px;
+      border-radius:5px;
+    }
+    .cate{
+      background:#4444ff;
+      padding:2px 5px;
+      border-radius:5px;
+      color:#fff;
+    }
+
+    a.xia.button{
+      background:#cc0000 !important;
+    }
+    a.xia.button:hover{
+     background:#aa0000 !important;
+    }
+    .shang{
+      background:#00cc00;
+    }
+  </style>
+</head>
+<body>
+<div id="body-wrapper">
+  <!-- Wrapper for the radial gradient background -->
+  <div id="sidebar">
+    <th:block th:include="inc/muban :: sidebar" />
+   </div>
+  <!-- End #sidebar -->
+  <div id="main-content">
+    <!-- Page Head -->
+    <h2>参数管理</h2>
+    <!-- End .shortcut-buttons-set -->
+    <div class="clear"></div>
+    <!-- End .clear -->
+    <div class="content-box">
+      <!-- Start Content Box -->
+      <div class="content-box-header">
+        <h3>商品管理</h3>
+        <div class="clear"></div>
+      </div>
+      <!-- End .content-box-header -->
+      <div class="content-box-content">
+        <div class="tab-content default-tab">
+
+            <a class="button" th:href="@{/spu/add}">添加商品</a>
+          <table>
+            <thead>
+              <tr>
+                <th width="80px">商品ID</th>
+                <th width="150px">商品名</th>
+                <th width="350px">商品标题</th>
+                <th width="40px">是否下架</th>
+                <th width="40px">单位</th>
+                <th width="70px">创建时间</th>
+                <th width="70px">更新时间</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tfoot>
+              <tr>
+                <td colspan="6">
+                  <div class="bulk-actions align-left">
+                    当前是第
+                    <span th:text="${pager.pageNum}"></span>
+                   页
+                  </div>
+                  <div class="pagination">
+                    <a th:href="@{/spu/admin}" title="First Page">&laquo; First</a>
+                    <a th:href="@{/spu/admin(page=${pager.prePage})}" title="Previous Page" th:if="${pager.pageNum>1}">&laquo; Previous</a>
+                    <span th:class="number" title="1"  th:if="${pager.PageNum>=7}">▪▪▪</span>
+                    <th:block th:each="i:${#numbers.sequence(1, 10)}" th:if="${pager.PageNum<7 and pager.pageNum>=1}">
+
+                      <a th:href="@{/spu/admin(page=${i})}" th:class="${i==pager.pageNum?'number current':'number'}" title="1" th:text="${i}">1</a>
+                    </th:block>
+                    <th:block th:each="i:${#numbers.sequence(pager.PageNum-5, pager.PageNum+4)}" th:if="${pager.PageNum>=7 and pager.pageNum<=pager.pages-4}">
+
+                      <a th:href="@{/spu/admin(page=${i})}" th:class="${i==pager.pageNum?'number current':'number'}" title="1" th:text="${i}">1</a>
+                    </th:block>
+                    <th:block th:each="i:${#numbers.sequence(pager.pages-9, pager.pages)}" th:if="${pager.pageNum>pager.pages-4 and pager.pageNum<=pager.pages}">
+
+                      <a th:href="@{/spu/admin(page=${i})}" th:class="${i==pager.pageNum?'number current':'number'}" title="1" th:text="${i}">1</a>
+                    </th:block>
+                    <span th:class="number" title="1"  th:if="${pager.pageNum<pager.pages-4}">▪▪▪</span>
+                    <a th:href="@{/spu/admin(page=${pager.nextPage})}" title="Next Page" th:if="${pager.pageNum<pager.pages}">Next &raquo;</a>
+                    <a th:href="@{/spu/admin(page=${pager.pages})}" title="Last Page">Last &raquo;</a> </div>
+                  <!-- End .pagination -->
+                  <div class="clear"></div>
+                </td>
+              </tr>
+            </tfoot>
+            <tbody>
+              <th:block th:each="spu:${pager.list}">
+              <tr>
+                <td th:text="${spu.spu_id}">Lorem ipsum dolor</td>
+                <td th:text="${spu.spu_name}"></td>
+                <td th:text="${spu.spu_title}">
+                </td>
+                <td >
+                  <th:block th:if="${spu.spu_status==1}">
+                    <span class="shi">上架</span>
+                  </th:block>
+
+                  <th:block th:if="${spu.spu_status==0}">
+                    <span class="fou">下架</span>
+                  </th:block>
+                </td>
+                <td th:text="${spu.spu_unit}">
+
+                </td>
+                <td th:text="${#dates.format(spu.createtime,'yyyy-MM-dd')}">
+                </td>
+                </td>
+                <td th:text="${#dates.format(spu.updatetime,'yyyy-MM-dd')}">
+                </td>
+                <td>
+                    <a th:href="@{/spu/update/{spu_id}(spu_id=${spu.spu_id})}" title="编辑商品"><img th:src="@{/resources/images/icons/pencil.png}" alt="编辑员工" /></a>
+                    <a th:href="@{/spu/sxjia(spu_id=${spu.spu_id},spu_status=-1)}" onclick='return confirm("确定要删除商品吗？");' title="删除商品"><img th:src="@{/resources/images/icons/cross.png}" alt="删除员工" /></a>
+
+
+                  <th:block th:if="${spu.spu_status==1}">
+                    <a class="button xia" th:href="@{/spu/sxjia(spu_id=${spu.spu_id},spu_status=0)}" onclick='return confirm("确定要确定下架吗？");' title="确定下架">
+                      下架
+                    </a>
+                  </th:block>
+
+                  <th:block th:if="${spu.spu_status==0}">
+                    <a class="button shang" th:href="@{/spu/sxjia(spu_id=${spu.spu_id},spu_status=1)}" onclick='return confirm("确定要确定上商品吗？");' title="确定上架">
+                     上架
+                    </a>
+                  </th:block>
+                  <!-- Icons -->
+
+                  <a class="button" th:href="@{/sku/add(spu_id=${spu.spu_id})}">添加规格</a>
+                  </td>
+              </tr>
+              </th:block>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+      <!-- End .content-box-content -->
+    </div>
+
+    <th:block th:include="inc/muban :: footer"></th:block>
+  </div>
+  <!-- End #main-content -->
+</div>
+</body>
+<!-- Download From www.exet.tk-->
+</html>

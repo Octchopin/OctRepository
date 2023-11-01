@@ -1,0 +1,152 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+  <!--代表使用inc目录下模板是muban.html中的叫header的模块中间的内容-->
+  <th:block th:include="inc/muban :: header" />
+  <style>
+    .listlabel{
+      display:inline;
+      font-weight:normal;
+    }
+  </style>
+  <script type="text/javascript" th:src="@{/resources/scripts/jquery-3.6.0.js}"></script>
+</head>
+<body>
+<div id="body-wrapper">
+  <!-- Wrapper for the radial gradient background -->
+  <div id="sidebar">
+    <th:block th:include="inc/muban :: sidebar" />
+   </div>
+  <!-- End #sidebar -->
+  <div id="main-content">
+    <!-- Page Head -->
+    <h2>规格管理</h2>
+    <!-- End .shortcut-buttons-set -->
+    <div class="clear"></div>
+    <!-- End .clear -->
+    <div class="content-box">
+      <!-- Start Content Box -->
+      <div class="content-box-header">
+        <h3>添加规格</h3>
+        <div class="clear"></div>
+      </div>
+      <!-- End .content-box-header -->
+
+      <div class="content-box-content">
+        <div class="tab-content default-tab">
+          <form th:action="@{/sku/alter}" method="post" enctype="multipart/form-data">
+            <input type="hidden" th:value="${sku.sku_id}" name="sku_id">
+          <table>
+            <thead>
+              <tr>
+                <th width="150px">属性</th>
+                <th >值</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr>
+                <td ><label>spu名字</label></td>
+                <td th:text="${sku.spu.spu_name}">
+
+
+                </td>
+              </tr>
+              <tr>
+                <td ><label>规格属性</label></td>
+                <td >
+                  <div class="shaixuan">
+                    <div class="keyvalue" >
+                        <div th:each="skubo:${sku.boList}">
+                          <span th:text="${skubo.key_name}"></span>
+                          <span th:text="${skubo.value_name}"></span>
+                        </div>
+                    </div>
+                  </div>
+
+                </td>
+              </tr>
+              <tr>
+                <td ><label>sku名称</label></td>
+                <td >
+                  <input readonly class="text-input small-input sku_name" type="text" id="small-input" name="sku_name" th:value="${sku.sku_name}">
+                </td>
+              </tr>
+              <tr>
+                <td ><label>价格</label></td>
+                <td >
+                  <input class="text-input small-input " type="text" id="small-input" name="sku_price" th:value="${sku.sku_price}">
+                </td>
+              </tr>
+              <tr>
+                <td ><label>库存</label></td>
+                <td >
+                  <input class="text-input small-input " type="text" id="small-input" name="sku_quantity" th:value="${sku.sku_quantity}">
+                </td>
+                </td>
+              </tr>
+            </tbody>
+            <tfoot>
+            <tr>
+              <td colspan="2">
+                <button class="button" >添加提交</button>
+              </td>
+            </tr>
+            </tfoot>
+          </table>
+          </form>
+        </div>
+
+      </div>
+      <!-- End .content-box-content -->
+    </div>
+
+    <th:block th:include="inc/muban :: footer"></th:block>
+  </div>
+  <!-- End #main-content -->
+  <script>
+    let i=0;
+
+    let sku_name;
+    $(".getguige").change(function(){
+      let spu_id=$(this).val();
+      sku_name=$(this).find("option:selected").text();
+      $(".shaixuan").html("");
+      //根据spu_id获取规格属性键及属性值列表
+      $.get("/sku/getAttrKeyList/"+spu_id,function(data){
+        let arr=JSON.parse(data);
+        let str="";
+
+         for(let key of arr){
+
+
+            str=str+`
+              <div class="keyvalue">
+                <span style="font-size:18px">
+                  ${key.key_name}:
+                </span>`
+                j=0;
+                for(let val of key.valueList){
+                 str+=` <label class="listlabel"><input type="radio" name="vidList[${i}]" value="${val.value_id}">${val.value_name}</label>`
+                 j++;
+                }
+
+               str+=`
+              </div>
+              `
+            i++;
+         }
+
+        $(".shaixuan").append(str);
+      })
+
+
+      $(".sku_name").val(sku_name);
+    })
+
+
+
+  </script>
+</div>
+</body>
+<!-- Download From www.exet.tk-->
+</html>

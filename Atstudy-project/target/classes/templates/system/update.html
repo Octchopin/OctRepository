@@ -1,0 +1,89 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+  <!--代表使用inc目录下模板是muban.html中的叫header的模块中间的内容-->
+  <th:block th:include="inc/muban :: header" />
+  <style>
+    .listlabel{
+      display:inline;
+      font-weight:normal;
+    }
+  </style>
+</head>
+<body>
+<div id="body-wrapper">
+  <!-- Wrapper for the radial gradient background -->
+  <div id="sidebar">
+    <th:block th:include="inc/muban :: sidebar" />
+   </div>
+  <!-- End #sidebar -->
+  <div id="main-content">
+    <!-- Page Head -->
+    <h2>系统设置</h2>
+    <!-- End .shortcut-buttons-set -->
+    <div class="clear"></div>
+    <!-- End .clear -->
+    <div class="content-box">
+      <!-- Start Content Box -->
+      <div class="content-box-header">
+        <h3>修改密码</h3>
+        <div class="clear"></div>
+      </div>
+      <!-- End .content-box-header -->
+
+      <div class="content-box-content">
+        <div class="tab-content default-tab">
+          <form th:action="@{/system/alter}" method="post">
+          <table>
+            <thead>
+              <tr>
+                <th width="150px">属性</th>
+                <th >输入值</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr>
+                <td ><label>输入原始密码</label></td>
+                <td >
+                  <input class="text-input small-input" type="text" id="small-input" name="password">
+                </td>
+              </tr>
+              <tr>
+                <td ><label>输入新密码</label></td>
+                <td >
+                  <input class="text-input small-input" type="text" id="small-input" name="newpwd">
+                </td>
+              </tr>
+              <tr>
+                <td ><label>输入新的确认密码</label></td>
+                <td >
+
+                  <input class="text-input small-input" type="text" id="small-input" name="rnewpwd">
+
+
+                </td>
+              </tr>
+            </tbody>
+            <tfoot>
+            <tr>
+              <td colspan="2">
+                <button class="button" >添加提交</button>
+                <span style="color:red" th:text="${msg}"></span>
+              </td>
+            </tr>
+            </tfoot>
+          </table>
+          </form>
+        </div>
+
+      </div>
+      <!-- End .content-box-content -->
+    </div>
+
+    <th:block th:include="inc/muban :: footer"></th:block>
+  </div>
+  <!-- End #main-content -->
+</div>
+</body>
+<!-- Download From www.exet.tk-->
+</html>

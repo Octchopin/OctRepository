@@ -1,0 +1,108 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+  <!--代表使用inc目录下模板是muban.html中的叫header的模块中间的内容-->
+  <th:block th:include="inc/muban :: header" />
+  <style>
+    .listlabel{
+      display:inline;
+      font-weight:normal;
+      font-size:14px;
+    }
+  </style>
+</head>
+<body>
+<div id="body-wrapper">
+  <!-- Wrapper for the radial gradient background -->
+  <div id="sidebar">
+    <th:block th:include="inc/muban :: sidebar" />
+   </div>
+  <!-- End #sidebar -->
+  <div id="main-content">
+    <!-- Page Head -->
+    <h2>角色管理</h2>
+    <!-- End .shortcut-buttons-set -->
+    <div class="clear"></div>
+    <!-- End .clear -->
+    <div class="content-box">
+      <!-- Start Content Box -->
+      <div class="content-box-header">
+        <h3>添加角色</h3>
+        <div class="clear"></div>
+      </div>
+      <!-- End .content-box-header -->
+
+      <div class="content-box-content">
+        <div class="tab-content default-tab">
+          <form th:action="@{/role/save}" method="post">
+          <table>
+            <thead>
+              <tr>
+                <th width="150px">属性</th>
+                <th >值</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr>
+                <td ><label>角色名</label></td>
+                <td >
+                  <input class="text-input small-input" type="text" id="small-input" name="role_name">
+                </td>
+              </tr>
+              <tr>
+                <td ><label>分配权限</label></td>
+                <td >
+                  <!--一级权限 pid为空-->
+                  <th:block th:each="yi:${permissionList}" th:if="${yi.pid==null}">
+                    <label class="yi" style="font-size:18px">
+                      <input name="permission_ids" th:value="${yi.permission_id}" type="checkbox" >
+                      <th:block th:text="${yi.permission_name}"></th:block>
+                    </label>
+
+                    <!--二级权限的pid等于一级权限的id-->
+                      <th:block th:each="er:${permissionList}" th:if="${er.pid==yi.permission_id}">
+                        <div style="margin-left:30px;margin-bottom:10px">
+                          <label class="er listlabel" style="font-weight:bold;">
+                           <input name="permission_ids" th:value="${er.permission_id}" type="checkbox" >
+                            <th:block th:text="${er.permission_name}"></th:block>:
+                          </label>
+
+                        <!--二级权限的pid等于一级权限的id-->
+                          <th:block th:each="san:${permissionList}" th:if="${san.pid==er.permission_id}">
+                            <label class="san listlabel" >
+                              <input name="permission_ids" th:value="${san.permission_id}" type="checkbox" >
+                              <th:block th:text="${san.permission_name}"></th:block>:
+                            </label>
+                          </th:block>
+                        </div>
+                     </th:block>
+
+                    <hr>
+                  </th:block>
+
+
+                </td>
+              </tr>
+            </tbody>
+            <tfoot>
+            <tr>
+              <td colspan="2">
+                <button class="button" >添加提交</button>
+              </td>
+            </tr>
+            </tfoot>
+          </table>
+          </form>
+        </div>
+
+      </div>
+      <!-- End .content-box-content -->
+    </div>
+
+    <th:block th:include="inc/muban :: footer"></th:block>
+  </div>
+  <!-- End #main-content -->
+</div>
+</body>
+<!-- Download From www.exet.tk-->
+</html>

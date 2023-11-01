@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xgq.dao.SkuDao">
+
+
+<select id="findSkuList" resultMap="skuMap">
+    SELECT sk.createtime AS skctime,sk.updatetime AS skutime,sk.*,sp.createtime AS spctime,sp.updatetime AS sputime,sp.*
+    FROM sku sk left JOIN spu sp ON sp.spu_id=sk.sku_spu_id
+
+<where>
+
+    <if test="sku_name!=null and sku_name!=''">  and sk.sku_name like concat('%',#{sku_name},'%')  </if>
+      <if test="spu_name!=null and spu_name!=''"> and sp.spu_name like concat('%',#{spu_name},'%')  </if>
+</where>
+
+</select>
+    <resultMap id="skuMap" type="com.xgq.pojo.Sku">
+        <id property="sku_id" column="sku_id"></id>
+        <result column="sku_spu_id" property="sku_spu_id"></result>
+        <result column="sku_name" property="sku_name"></result>
+        <result column="sku_spuattr" property="sku_spuattr"></result>
+        <result column="sku_price" property="sku_price"></result>
+        <result column="sku_originalprice" property="sku_originalprice"></result>
+        <result column="sku_costprice" property="sku_costprice"></result>
+        <result column="sku_quantity" property="sku_quantity"></result>
+        <result column="sortno" property="sortno"></result>
+        <result column="skctime" property="createtime"></result>
+        <result column="skutime" property="updatetime"></result>
+        <association property="spu" javaType="com.xgq.pojo.Spu">
+            <id property="spu_id" column="spu_id"></id>
+            <result column="spu_name" property="spu_name"></result>
+            <result column="spu_title" property="spu_title"></result>
+            <result column="spu_introduction" property="spu_introduction"></result>
+            <result column="spu_unit" property="spu_unit"></result>
+            <result column="spu_sketchtype" property="spu_sketchtype"></result>
+            <result column="spu_sketch" property="spu_sketch"></result>
+            <result column="spu_specs" property="spu_specs"></result>
+            <result column="spu_skutype" property="spu_skutype"></result>
+            <result column="spu_status" property="spu_status"></result>
+            <result column="spctime" property="createtime"></result>
+            <result column="sputime" property="updatetime"></result>
+            <result column="brand_id" property="brand_id"></result>
+
+        </association>
+    </resultMap>
+    <select id="findSkuListBySpu_id" resultType="com.xgq.pojo.Sku">
+        select *
+        from sku
+        where sku_spu_id = #{spu_id}
+    </select>
+<!--    查询数组数据sku-->
+    <select id="findSkuBoList" resultType="com.xgq.Bo.SkuBo">
+        select s.spu_id ,sak.key_id,sak.key_name,sav.value_id ,sav.value_name  from spu s inner join spu_attr_value_spus savs on
+            savs.spu_id =s.spu_id
+                                                                                          inner  join  spu_attr_value sav  on sav.value_id =savs.spu_attr_value_id
+
+                                                                                          inner join  spu_attr_key sak  on sak.key_id =sav.key_id
+        where sav.value_id in
+<foreach collection="valList" separator="," item="val" open="(" close=")">
+    #{val}
+</foreach>
+    </select>
+
+    <insert id="insertSku">
+        insert into sku (sku_spu_id,sku_name,sku_spuattr,sku_price,sku_quantity,createtime,updatetime)
+        values (#{sku_spu_id},#{sku_name},#{sku_spuattr},#{sku_price},#{sku_quantity},now(),now())
+    </insert>
+    <delete id="deleteSku" >
+        delete
+        from sku
+        where sku_id=#{sku_id}
+    </delete>
+</mapper>
